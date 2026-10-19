@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    }
+  }
+}

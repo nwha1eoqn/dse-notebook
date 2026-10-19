@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>DSE 错题本</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231E3A5F'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>DSE</text></svg>">
+<style>
+:root{
+  --bg:#F7F8FA;--surface:#FFFFFF;--primary:#1E3A5F;--primary-light:#2C5282;--primary-bg:#EFF4F9;
+  --text:#1A1A1A;--text-secondary:#6B7280;--text-tertiary:#9CA3AF;
+  --border:#E5E7EB;--border-light:#F3F4F6;
+  --tag-blue-bg:#DBEAFE;--tag-blue-text:#1E40AF;
+  --tag-orange-bg:#FFEDD5;--tag-orange-text:#9A3412;
+  --tag-purple-bg:#EDE9FE;--tag-purple-text:#5B21B6;
+  --tag-red-bg:#FEE2E2;--tag-red-text:#991B1B;
+  --tag-green-bg:#D1FAE5;--tag-green-text:#065F46;
+  --tag-gray-bg:#F3F4F6;--tag-gray-text:#374151;
+  --tag-cyan-bg:#CFFAFE;--tag-cyan-text:#155E75;
+  --radius:10px;--radius-sm:6px;--nav-width:240px;--topbar-height:56px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--nav-width);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
+.sidebar-brand{padding:20px 24px;border-bottom:1px solid var(--border-light)}
+.sidebar-brand h1{font-size:16px;font-weight:600;color:var(--primary)}
+.sidebar-brand p{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.sidebar-nav{flex:1;padding:12px;overflow-y:auto}
+.nav-section-label{font-size:10px;font-weight:600;color:var(--text-tertiary);letter-spacing:1px;padding:12px 12px 6px}
+.nav-item{display:flex;align-items:center;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text-secondary);font-size:13.5px;cursor:pointer;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--border-light);color:var(--text)}
+.nav-item.active{background:var(--primary);color:#fff;font-weight:500}
+.nav-item .nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text-tertiary);margin-right:12px;flex-shrink:0}
+.nav-item.active .nav-dot{background:#fff}
+.nav-item .nav-badge{margin-left:auto;background:var(--tag-red-bg);color:var(--tag-red-text);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.nav-item.active .nav-badge{background:rgba(255,255,255,.2);color:#fff}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border-light)}
+.sidebar-footer a{display:flex;align-items:center;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text-secondary);font-size:13.5px;cursor:pointer}
+.sidebar-footer a:hover{background:var(--border-light)}
+.main{margin-left:var(--nav-width);min-height:100vh}
+.topbar{position:sticky;top:0;height:var(--topbar-height);background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 32px;z-index:50}
+.topbar-title{font-size:15px;font-weight:600;flex-shrink:0}
+.topbar-search{flex:1;max-width:360px;position:relative}
+.topbar-search input{width:100%;padding:7px 12px 7px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);outline:none;transition:border-color .15s}
+.topbar-search input:focus{border-color:var(--primary);background:#fff}
+.topbar-search::before{content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:1.5px solid var(--text-tertiary);border-radius:50%}
+.topbar-search::after{content:"";position:absolute;left:20px;top:calc(50% + 4px);width:6px;height:1.5px;background:var(--text-tertiary);transform:rotate(45deg)}
+.topbar-date{font-size:12px;color:var(--text-tertiary);flex-shrink:0}
+.search-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:4px;box-shadow:0 4px 12px rgba(0,0,0,.08);display:none;max-height:300px;overflow-y:auto;z-index:200}
+.search-dropdown.show{display:block}
+.search-item{padding:10px 14px;border-bottom:1px solid var(--border-light);cursor:pointer}
+.search-item:hover{background:var(--border-light)}
+.search-item .si-title{font-size:13px;font-weight:500}
+.search-item .si-meta{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.content{padding:32px;max-width:1100px}
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-header{margin-bottom:28px}
+.page-header h2{font-size:22px;font-weight:600;margin-bottom:4px}
+.page-header p{font-size:13px;color:var(--text-secondary)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px}
+.stat-card .stat-label{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+.stat-card .stat-value{font-size:28px;font-weight:600}
+.stat-card .stat-sub{font-size:11px;color:var(--text-tertiary);margin-top:4px}
+.stat-card .stat-action{margin-top:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:inherit;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-light)}
+.btn-outline{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.btn-outline:hover{background:var(--primary-bg)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--border-light);color:var(--text)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-success{background:#065F46;color:#fff}
+.btn-warning{background:#92400E;color:#fff}
+.btn-danger{background:#991B1B;color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.section{margin-bottom:32px}
+.section-title{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.tag-concept{background:var(--tag-blue-bg);color:var(--tag-blue-text)}
+.tag-calc{background:var(--tag-orange-bg);color:var(--tag-orange-text)}
+.tag-approach{background:var(--tag-purple-bg);color:var(--tag-purple-text)}
+.tag-misread{background:var(--tag-red-bg);color:var(--tag-red-text)}
+.tag-time{background:var(--tag-gray-bg);color:var(--tag-gray-text)}
+.tag-careless{background:var(--tag-green-bg);color:var(--tag-green-text)}
+.tag-mc{background:var(--tag-cyan-bg);color:var(--tag-cyan-text)}
+.tag-lq{background:var(--tag-purple-bg);color:var(--tag-purple-text)}
+.difficulty{font-size:11px;color:var(--text-tertiary)}
+.list-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background .15s}
+.list-item:hover{background:#FAFBFC}
+.list-item:last-child{border-bottom:none}
+.list-item .item-id{font-size:12px;font-weight:600;color:var(--text-tertiary);width:50px;flex-shrink:0}
+.list-item .item-info{flex:1}
+.list-item .item-title{font-size:13.5px;margin-bottom:3px}
+.list-item .item-meta{font-size:11.5px;color:var(--text-tertiary);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.list-item .item-action{flex-shrink:0}
+.progress-bar{height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease}
+.upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--primary);background:#F8FAFC}
+.upload-area .upload-icon{width:40px;height:40px;margin:0 auto 12px;border:1.5px solid var(--text-tertiary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:20px}
+.upload-area .upload-text{font-size:14px;color:var(--text-secondary);margin-bottom:4px}
+.upload-area .upload-hint{font-size:12px;color:var(--text-tertiary)}
+.upload-preview{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.upload-preview .preview-img{width:140px;height:100px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.form-group{display:flex;flex-direction:column}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--surface);font-family:inherit;transition:border-color .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
+.empty-state{text-align:center;padding:48px 24px;color:var(--text-tertiary)}
+.empty-state .es-icon{width:48px;height:48px;margin:0 auto 12px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-tertiary)}
+.empty-state p{font-size:13px;margin-bottom:12px}
+.subject-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-chip{padding:5px 14px;border-radius:16px;font-size:12px;border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .15s;background:var(--surface)}
+.filter-chip:hover{border-color:var(--primary);color:var(--primary)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.topic-group{margin-bottom:20px}
+.topic-group .topic-header{font-size:13px;font-weight:600;padding:10px 14px;background:var(--primary-bg);border-radius:var(--radius-sm);cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--primary);transition:background .15s}
+.topic-group .topic-header:hover{background:#E2EAF3}
+.topic-group .topic-count{font-size:11px;color:var(--text-secondary);font-weight:400}
+.topic-group .topic-body{padding:8px 0 0 14px;display:none}
+.topic-group.open .topic-body{display:block}
+.subtopic-group{margin-bottom:12px}
+.subtopic-group .subtopic-header{font-size:12.5px;color:var(--text-secondary);padding:6px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.subtopic-group .subtopic-header:hover{color:var(--primary)}
+.subtopic-group .subtopic-count{font-size:11px;color:var(--text-tertiary);background:var(--border-light);padding:1px 8px;border-radius:10px}
+.subtopic-items{padding-left:16px}
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{width:80px;font-size:12px;color:var(--text-secondary);text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:var(--border-light);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:var(--primary);border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;color:#fff;font-weight:500;min-width:24px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;gap:20px;transition:all .15s}
+.review-card:hover{border-color:var(--primary);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.review-card .rc-left{flex:1}
+.review-card .rc-title{font-size:14px;font-weight:500;margin-bottom:6px}
+.review-card .rc-meta{font-size:12px;color:var(--text-tertiary);display:flex;gap:16px;flex-wrap:wrap}
+.review-mode{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.review-mode-header{padding:16px 24px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between}
+.review-mode-body{padding:24px}
+.rm-question{margin-bottom:20px}
+.rm-question h4{font-size:14px;font-weight:600;margin-bottom:10px}
+.rm-question p{font-size:13px;line-height:1.8;margin-bottom:8px}
+.rm-canvas{border:1px solid var(--border);border-radius:var(--radius-sm);height:160px;background:#FAFBFC;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:12px;margin:16px 0}
+.rm-toggle-section{margin:12px 0;border:1px solid var(--border-light);border-radius:var(--radius-sm);overflow:hidden}
+.rm-toggle-header{padding:12px 16px;background:var(--border-light);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:500}
+.rm-toggle-header:hover{background:#EEF0F3}
+.rm-toggle-content{padding:16px;display:none;font-size:13px;line-height:1.8}
+.rm-toggle-content.open{display:block}
+.rm-feedback{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-light)}
+.rm-feedback h4{font-size:13px;font-weight:600;margin-bottom:12px}
+.rm-feedback-btns{display:flex;gap:12px}
+.error-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.ed-header{padding:20px 24px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ed-header h3{font-size:16px;font-weight:600}
+.ed-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ed-body{padding:24px}
+.ed-section{margin-bottom:24px}
+.ed-section h4{font-size:13px;font-weight:600;color:var(--text-secondary);letter-spacing:.3px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-light)}
+.ed-section p{font-size:13px;line-height:1.8}
+.ed-wrong{background:var(--tag-red-bg);border-left:3px solid #991B1B;padding:12px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:10px 0}
+.ed-wrong .ew-label{font-size:11px;font-weight:600;color:var(--tag-red-text);margin-bottom:4px}
+.ed-correct{background:var(--tag-green-bg);border-left:3px solid #065F46;padding:12px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:10px 0}
+.ed-correct .ec-label{font-size:11px;font-weight:600;color:var(--tag-green-text);margin-bottom:4px}
+.ed-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.ed-meta-item{background:var(--bg);padding:10px 14px;border-radius:var(--radius-sm)}
+.ed-meta-item .emi-label{font-size:11px;color:var(--text-tertiary);margin-bottom:2px}
+.ed-meta-item .emi-value{font-size:13px;font-weight:500}
+.ed-option-row{padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:6px;font-size:13px;display:flex;gap:10px;align-items:flex-start}
+.ed-option-row.correct{background:var(--tag-green-bg)}
+.ed-option-row.wrong{background:var(--tag-red-bg)}
+.ed-option-row .opt-letter{font-weight:600;flex-shrink:0;width:20px}
+.ed-step-row{padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;font-size:13px}
+.ed-step-row .step-mark{display:inline-block;background:var(--primary);color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;margin-right:8px;font-weight:600}
+.ed-step-row.lost{border-left:3px solid #991B1B}
+.ed-chat{max-height:300px;overflow-y:auto;padding:8px 0}
+.chat-msg{margin-bottom:14px;display:flex;gap:10px}
+.chat-msg.ai{flex-direction:row}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.chat-msg.ai .chat-avatar{background:var(--primary);color:#fff}
+.chat-msg.user .chat-avatar{background:var(--text-secondary);color:#fff}
+.chat-bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6}
+.chat-msg.ai .chat-bubble{background:var(--border-light);border-top-left-radius:4px}
+.chat-msg.user .chat-bubble{background:var(--primary);color:#fff;border-top-right-radius:4px}
+.chat-input-area{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light)}
+.chat-input-area input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit}
+.chat-input-area input:focus{outline:none;border-color:var(--primary)}
+.wizard-steps{display:flex;gap:0;margin-bottom:28px;align-items:center}
+.wizard-step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-tertiary);flex-shrink:0}
+.wizard-step .ws-num{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.wizard-step.active{color:var(--primary);font-weight:600}
+.wizard-step.active .ws-num{border-color:var(--primary);background:var(--primary);color:#fff}
+.wizard-step.done{color:var(--text-secondary)}
+.wizard-step.done .ws-num{border-color:#065F46;background:#065F46;color:#fff}
+.wizard-line{flex:1;height:1.5px;background:var(--border);margin:0 8px;min-width:20px}
+.wizard-line.done{background:#065F46}
+.wizard-content{min-height:300px}
+.wizard-actions{display:flex;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid var(--border-light)}
+.ai-loading{display:flex;align-items:center;gap:8px;padding:16px;color:var(--text-secondary);font-size:13px}
+.ai-loading .dot{width:6px;height:6px;border-radius:50%;background:var(--text-tertiary);animation:pulse 1.4s infinite}
+.ai-loading .dot:nth-child(2){animation-delay:.2s}
+.ai-loading .dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.inquiry-question{background:var(--primary-bg);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:14px}
+.inquiry-question .iq-label{font-size:11px;color:var(--primary);font-weight:600;margin-bottom:6px}
+.inquiry-question .iq-text{font-size:13px;margin-bottom:10px}
+.inquiry-options{display:flex;gap:8px;flex-wrap:wrap}
+.inquiry-option{padding:6px 14px;border:1px solid var(--border);border-radius:16px;font-size:12px;cursor:pointer;transition:all .15s;background:#fff}
+.inquiry-option:hover{border-color:var(--primary);color:var(--primary)}
+.inquiry-option.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.inquiry-option.custom{border-style:dashed}
+.discussion-panel{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.discussion-left{border-right:1px solid var(--border-light);padding-right:20px}
+.discussion-right{display:flex;flex-direction:column}
+.settings-group{margin-bottom:28px}
+.settings-group h3{font-size:14px;font-weight:600;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border-light)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.setting-row .sr-label{font-size:13px}
+.setting-row .sr-desc{font-size:11.5px;color:var(--text-tertiary);margin-top:2px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-card h4{font-size:13px;font-weight:600;margin-bottom:16px}
+/* ===== AI助手对话界面样式 ===== */
+.ai-chat-layout{display:flex;flex-direction:column;height:calc(100vh - 230px);min-height:460px}
+.ai-chat-messages{flex:1;overflow-y:auto;padding:8px 4px;scroll-behavior:smooth}
+.ai-chat-messages .chat-bubble img.thumb{max-width:140px;max-height:140px;object-fit:cover;border-radius:8px;display:block;margin-top:6px;border:1px solid rgba(255,255,255,.3)}
+.ai-chat-messages .chat-msg.ai .chat-bubble img.thumb{border-color:var(--border)}
+.ai-img-preview-row{display:none;gap:8px;padding:8px 0 0;align-items:flex-end;flex-wrap:wrap}
+.ai-img-preview-row.show{display:flex}
+.ai-img-thumb{position:relative;width:64px;height:64px;flex-shrink:0}
+.ai-img-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.ai-img-thumb .thumb-remove{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border-radius:50%;background:var(--text);color:#fff;border:none;font-size:11px;line-height:18px;text-align:center;cursor:pointer;padding:0}
+.ai-chat-input-row{display:flex;gap:8px;align-items:center;padding-top:12px;border-top:1px solid var(--border-light);margin-top:12px}
+.ai-chat-input-row .attach-btn{width:38px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--text-secondary)}
+.ai-chat-input-row .attach-btn:hover{border-color:var(--primary);color:var(--primary)}
+.ai-chat-input-row input[type=text]{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit}
+.ai-chat-input-row input[type=text]:focus{outline:none;border-color:var(--primary)}
+.ai-welcome{padding:24px 16px;text-align:center;color:var(--text-tertiary)}
+.ai-welcome .aw-icon{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600}
+.ai-welcome p{font-size:13px;line-height:1.8}
+.ai-entry-btn{margin-top:12px;display:inline-block}
+.chat-bubble .import-action{margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);display:flex;gap:8px;flex-wrap:wrap}
+.chat-bubble .reply-text{white-space:pre-wrap;word-break:break-word}
+a{color:var(--primary);text-decoration:none}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:999;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .stats-grid,.chart-grid,.ed-meta-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .content{padding:20px}
+  .topbar-search{display:none}
+  .discussion-panel{grid-template-columns:1fr}
+  .discussion-left{border-right:none;border-bottom:1px solid var(--border-light);padding-right:0;padding-bottom:20px}
+}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sidebar-brand"><h1>DSE 错题本</h1><p>Error Notebook</p></div>
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <a class="nav-item active" data-page="home" onclick="navigate('home')"><span class="nav-dot"></span>首页</a>
+      <a class="nav-item" data-page="upload" onclick="navigate('upload')"><span class="nav-dot"></span>如何录入</a>
+      <a class="nav-item" data-page="review" onclick="navigate('review')"><span class="nav-dot"></span>今日复习<span class="nav-badge" id="reviewBadge">0</span></a>
+      <a class="nav-item" data-page="aiassistant" onclick="navigate('aiassistant')"><span class="nav-dot"></span>AI助手</a>
+      <a class="nav-item" data-page="analytics" onclick="navigate('analytics')"><span class="nav-dot"></span>数据分析</a>
+    </div>
+    <div class="nav-section-label">学科</div>
+    <div class="nav-section">
+      <a class="nav-item" data-page="subject-chinese" onclick="navigate('subject-chinese')"><span class="nav-dot"></span>中国语文</a>
+      <a class="nav-item" data-page="subject-english" onclick="navigate('subject-english')"><span class="nav-dot"></span>英国语文</a>
+      <a class="nav-item" data-page="subject-math" onclick="navigate('subject-math')"><span class="nav-dot"></span>数学（必修）</a>
+      <a class="nav-item" data-page="subject-m2" onclick="navigate('subject-m2')"><span class="nav-dot"></span>数学 M2</a>
+      <a class="nav-item" data-page="subject-physics" onclick="navigate('subject-physics')"><span class="nav-dot"></span>物理</a>
+      <a class="nav-item" data-page="subject-chemistry" onclick="navigate('subject-chemistry')"><span class="nav-dot"></span>化学</a>
+    </div>
+  </div>
+  <div class="sidebar-footer"><a onclick="navigate('settings')"><span class="nav-dot"></span>设置</a></div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">首页</div>
+    <div class="topbar-search">
+      <input type="text" id="searchInput" placeholder="搜索错题编号或关键词..." oninput="handleSearch(this.value)" onfocus="handleSearch(this.value)">
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+    <div class="topbar-date" id="topbarDate"></div>
+  </div>
+  <div class="content">
+
+    <!-- ===== 首页 ===== -->
+    <div class="page active" id="page-home">
+      <div class="page-header"><h2>今日概览</h2><p>坚持复习，错题不再错</p></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">今日待复习</div><div class="stat-value" id="homeReviewCount">0</div><div class="stat-sub" id="homeReviewSub">—</div><div class="stat-action"><button class="btn btn-primary btn-sm" onclick="navigate('review')">开始复习</button></div></div>
+        <div class="stat-card"><div class="stat-label">错题总数</div><div class="stat-value" id="homeTotal">0</div><div class="stat-sub" id="homeTotalSub">—</div></div>
+        <div class="stat-card"><div class="stat-label">长期记忆中</div><div class="stat-value" id="homeLongTerm">0</div><div class="stat-sub">掌握后 30→60→90→180 天间隔</div></div>
+      </div>
+      <div class="section"><div class="section-title"><span>如何录入错题</span><span style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="navigate('aiassistant')">打开AI助手</button><button class="btn btn-outline btn-sm" onclick="navigate('upload')">查看说明</button></span></div><div class="card"><p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">在「AI助手」中拍一张错题照片，AI 自动识别题目、分析错因、生成解析，确认后一键录入本错题本，刷新即可查看。无需再复制粘贴到其他对话。</p></div></div>
+      <div class="section"><div class="section-title">最近录入</div><div class="card" id="recentList"></div></div>
+    </div>
+
+    <!-- ===== 如何录入错题 ===== -->
+    <div class="page" id="page-upload">
+      <div class="page-header"><h2>如何录入错题</h2><p>在AI助手中拍照上传，AI自动识别并一键录入</p></div>
+      <div style="margin-bottom:20px;"><button class="btn btn-primary" onclick="navigate('aiassistant')">📷 打开AI助手，开始拍照录入</button></div>
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;">录入流程</h3>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;">1</div>
+            <div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">打开侧边栏「AI助手」</div><div style="font-size:13px;color:var(--text-secondary);;">AI助手是本软件内置的对话页面，直接在这里和AI交流即可，不需要再跳转到豆包或其他对话工具。</div></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;">2</div>
+            <div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">拍照上传错题照片</div><div style="font-size:13px;color:var(--text-secondary);;">点击📷拍照按钮（手机端直接调起相机）或🖼从相册选择，拍清楚题目、你的答案和选项。可以附上一句说明，如「这道题错了，帮我录入」。</div></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;">3</div>
+            <div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">AI识别题目并生成解析</div><div style="font-size:13px;color:var(--text-secondary);;">AI 读取图片内容，自动判断学科、课题、子课题和题型，分析错因，给出正确答案、解题思路和核心知识点。有疑问可以继续对话追问。</div></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;">4</div>
+            <div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">确认后一键录入错题本</div><div style="font-size:13px;color:var(--text-secondary);;">确认解析无误后回复「录入错题」，AI会输出结构化数据，对话下方会出现「录入错题本」按钮，点击即完成录入，可直接跳转到新错题详情页。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--primary-bg);border:1px solid var(--primary-light);">
+        <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--primary);;">为什么直接在AI助手中拍照？</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin:0;">AI助手内置了图片识别能力，可以直接"看到"你的错题照片（包括公式、图表、装置图），识别和解析质量远高于普通文字输入。录入的数据直接写入本错题本，自动加入复习计划，无需任何复制粘贴操作。</p>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">支持的科目</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="tag tag-mc">中国语文</span>
+          <span class="tag tag-mc">英国语文</span>
+          <span class="tag tag-mc">数学（必修）</span>
+          <span class="tag tag-mc">数学 M2</span>
+          <span class="tag tag-mc">物理</span>
+          <span class="tag tag-mc">化学</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 今日复习 ===== -->
+    <div class="page" id="page-review">
+      <div class="page-header"><h2>今日复习</h2><p id="reviewSubtitle">0 道题待复习</p></div>
+      <div class="progress-bar" style="margin-bottom:24px;height:8px;"><div class="progress-fill" id="reviewProgress" style="width:0%"></div></div>
+      <div id="reviewList"></div>
+      <div id="reviewEmpty" class="empty-state" style="display:none;"><div class="es-icon" style="border-color:#065F46;color:#065F46;">!</div><p>今天没有待复习的错题，继续保持！</p></div>
+      <div id="reviewMode" style="display:none;margin-top:24px;">
+        <div class="review-mode">
+          <div class="review-mode-header"><span style="font-size:14px;font-weight:600;" id="rmTitle">复习中</span><button class="btn btn-ghost btn-sm" onclick="exitReview()">退出复习</button></div>
+          <div class="review-mode-body">
+            <div class="rm-question"><h4>题目</h4><p id="rmQuestionText"></p><p style="color:var(--text-secondary);font-size:12px;" id="rmYourAnswer"></p></div>
+            <div id="rmOptionsSection" style="display:none;margin-bottom:16px;">
+              <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;">你的答案（点击选择，再次点击取消）</h4>
+              <div id="rmOptions" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+            </div>
+            <div class="rm-canvas">做题画板 — 在飞书文档中可涂画、缩放、插入图片</div>
+            <div class="rm-toggle-section"><div class="rm-toggle-header" onclick="toggleSection('hint')"><span>解题提示（思考5分钟没思路再看）</span><span id="hint-arrow">+</span></div><div class="rm-toggle-content" id="hint-content"></div></div>
+            <div class="rm-toggle-section"><div class="rm-toggle-header" onclick="toggleSection('answer')"><span>完整解析（做完后对照）</span><span id="answer-arrow">+</span></div><div class="rm-toggle-content" id="answer-content"></div></div>
+            <div class="rm-feedback"><h4>复习得怎么样？</h4><div class="rm-feedback-btns"><button class="btn btn-success btn-sm" onclick="submitFeedback('掌握')">掌握了</button><button class="btn btn-warning btn-sm" onclick="submitFeedback('模糊')">有点模糊</button><button class="btn btn-danger btn-sm" onclick="submitFeedback('未掌握')">仍未掌握</button></div><p style="font-size:11px;color:var(--text-tertiary);margin-top:10px;">掌握 → 进入长期记忆（30→60→90→180天）；模糊 → 复习次数+1；未掌握 → 重置1天后复习</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AI助手 ===== -->
+    <div class="page" id="page-aiassistant">
+      <div class="page-header"><h2>AI助手</h2><p>拍照上传错题照片，AI自动识别题目、分析错因、生成解析，确认后一键录入错题本</p></div>
+      <div class="card ai-chat-layout">
+        <!-- 聊天消息区 -->
+        <div class="ai-chat-messages" id="aiChatMessages">
+          <div class="ai-welcome" id="aiWelcome">
+            <div class="aw-icon">AI</div>
+            <p>你好！我是DSE错题本AI助手。<br>
+            直接拍一张错题照片发给我，我会帮你识别题目、判断学科课题、分析错因并生成详细解析。<br>
+            确认无误后说「录入错题」，我会输出数据，你一键即可加入错题本。</p>
+            <button class="btn btn-primary btn-sm ai-entry-btn" onclick="document.getElementById('aiCameraInput').click()">📷 拍照上传错题</button>
+          </div>
+        </div>
+        <!-- 待发送图片预览 -->
+        <div class="ai-img-preview-row" id="aiPreviewRow"></div>
+        <!-- 底部输入区 -->
+        <div class="ai-chat-input-row">
+          <button class="attach-btn" title="拍照" onclick="document.getElementById('aiCameraInput').click()">📷</button>
+          <button class="attach-btn" title="从相册选择" onclick="document.getElementById('aiAlbumInput').click()">🖼</button>
+          <!-- 拍照输入：手机端直接调起相机 -->
+          <input type="file" id="aiCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleAIFilePick(this.files,this)">
+          <!-- 相册输入：从本地相册选择 -->
+          <input type="file" id="aiAlbumInput" accept="image/*" style="display:none" onchange="handleAIFilePick(this.files,this)">
+          <input type="text" id="aiChatInput" placeholder="输入说明（如：这道题错了，帮我录入）..." onkeydown="if(event.key==='Enter')sendAIChat()">
+          <button class="btn btn-primary" onclick="sendAIChat()" id="aiSendBtn">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 错题详情 ===== -->
+    <div class="page" id="page-error-detail">
+      <div class="page-header"><button class="btn btn-ghost btn-sm" id="edBackBtn" style="margin-bottom:12px;">← 返回</button><h2 id="edTitle"></h2><p id="edSubtitle"></p></div>
+      <div class="error-detail">
+        <div class="ed-header"><div class="ed-tags"><span class="tag" id="edErrorTag"></span><span class="tag" id="edTypeTag"></span><span class="difficulty" id="edDifficulty"></span></div><span style="font-size:12px;color:var(--text-tertiary);" id="edDate"></span></div>
+        <div class="ed-body">
+          <div class="ed-meta-grid">
+            <div class="ed-meta-item"><div class="emi-label">课题</div><div class="emi-value" id="edTopic"></div></div>
+            <div class="ed-meta-item"><div class="emi-label">子课题</div><div class="emi-value" id="edSubtopic"></div></div>
+            <div class="ed-meta-item"><div class="emi-label">复习次数</div><div class="emi-value" id="edReviewCount"></div></div>
+            <div class="ed-meta-item"><div class="emi-label">下次复习</div><div class="emi-value" id="edNextReview"></div></div>
+          </div>
+          <div id="edImagesSection" class="ed-section" style="display:none;"><h4>题目照片</h4><div id="edImages" style="display:flex;gap:12px;flex-wrap:wrap;"></div></div>
+          <div class="ed-section"><h4>题目</h4><p id="edQuestion"></p></div>
+          <div class="ed-section"><h4>你是怎么做错的</h4><div class="ed-wrong"><div class="ew-label" id="edWrongLabel"></div><p style="font-size:13px;margin:0;" id="edWrongDesc"></p></div></div>
+          <div id="edMcSection" class="ed-section" style="display:none;"><h4>选项分析</h4><div id="edOptions"></div></div>
+          <div id="edLqSection" class="ed-section" style="display:none;"><h4>标准答题步骤（Marking Scheme）</h4><div id="edSteps"></div><div style="margin-top:12px;"><h4 style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">失分点分析</h4><div id="edLostPoints"></div></div></div>
+          <div class="ed-section"><h4>正确解法与思路</h4><div class="ed-correct"><div class="ec-label" id="edCorrectLabel"></div><p style="font-size:13px;margin:0;" id="edCorrectDesc"></p></div><p style="margin-top:12px;" id="edAnalysis"></p></div>
+          <div class="ed-section"><h4>核心知识点</h4><p id="edKnowledge"></p></div>
+          <div class="ed-section"><h4>AI 问答</h4>
+            <div class="ed-chat" id="edInquiry" style="max-height:420px;"></div>
+            <div class="chat-input-area" style="border-top:1px solid var(--border-light);">
+              <input type="text" id="edChatInput" placeholder="对这道题还有什么不理解的？直接问AI..." onkeydown="if(event.key==='Enter')sendDetailChat()">
+              <button class="btn btn-primary btn-sm" onclick="sendDetailChat()" id="edChatSendBtn">发送</button>
+            </div>
+          </div>
+          <div class="ed-section"><h4>复习计划</h4><p>录入当天复习 → 第3天 → 第7天 → 第15天 → 第30天 → 第60天 → 第90天 → 第180天。每次反馈"掌握"进入下一间隔，"模糊"保持当前间隔，"未掌握"重置为1天后。全部掌握后仍在180天后抽查，防止长期遗忘。</p></div>
+          <div id="reviewFeedbackSection" class="ed-section" style="display:none;background:var(--primary-bg);border-radius:8px;padding:16px;">
+            <h4 style="margin-bottom:12px;">复习完成，掌握得怎么样？</h4>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-success btn-sm" onclick="submitFeedbackFromDetail('掌握')">掌握了</button>
+              <button class="btn btn-warning btn-sm" onclick="submitFeedbackFromDetail('模糊')">有点模糊</button>
+              <button class="btn btn-danger btn-sm" onclick="submitFeedbackFromDetail('未掌握')">仍未掌握</button>
+            </div>
+            <p style="font-size:11px;color:var(--text-tertiary);margin-top:10px;">掌握 → 进入长期记忆；模糊 → 复习次数+1；未掌握 → 重置1天后复习</p>
+          </div>
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <button class="btn btn-outline btn-sm" onclick="showReviewFeedback()">完成复习</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteError()">删除这道错题</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 删除确认对话框 ===== -->
+    <div id="deleteModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:28px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text-primary);">确认删除</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;" id="deleteModalText">确定要删除这道错题吗？此操作不可撤销。</p>
+        <div style="display:flex;gap:12px;justify-content:flex-end;">
+          <button class="btn btn-ghost btn-sm" onclick="closeDeleteModal()">取消</button>
+          <button class="btn btn-danger btn-sm" onclick="executeDeleteError()">确认删除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 图片查看器 ===== -->
+    <div id="imageViewer" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:2000;align-items:center;justify-content:center;" onclick="closeImageViewer()">
+      <div style="position:relative;max-width:95%;max-height:95%;">
+        <img id="viewerImage" src="" style="max-width:100%;max-height:90vh;object-fit:contain;border-radius:8px;">
+        <div id="viewerLabel" style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:6px;font-size:13px;"></div>
+        <button onclick="closeImageViewer()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">×</button>
+      </div>
+    </div>
+
+    <!-- ===== 数据分析 ===== -->
+    <div class="page" id="page-analytics">
+      <div class="page-header"><h2>数据分析</h2><p>了解薄弱环节，针对性提升</p></div>
+      <div class="chart-grid"><div class="chart-card"><h4>学科错题分布</h4><div class="bar-chart" id="chartSubject"></div></div><div class="chart-card"><h4>错误类型分布</h4><div class="bar-chart" id="chartError"></div></div></div>
+      <div class="chart-card" style="margin-bottom:24px;"><h4>掌握程度</h4><div id="chartMastery"></div></div>
+    </div>
+
+    <!-- ===== 学科页 ===== -->
+    <div class="page" id="page-subject-chinese"><div class="subject-page-content" data-subject="中国语文"></div></div>
+    <div class="page" id="page-subject-english"><div class="subject-page-content" data-subject="英国语文"></div></div>
+    <div class="page" id="page-subject-math"><div class="subject-page-content" data-subject="数学（必修）"></div></div>
+    <div class="page" id="page-subject-m2"><div class="subject-page-content" data-subject="数学 M2"></div></div>
+    <div class="page" id="page-subject-physics"><div class="subject-page-content" data-subject="物理"></div></div>
+    <div class="page" id="page-subject-chemistry"><div class="subject-page-content" data-subject="化学"></div></div>
+
+    <!-- ===== 设置 ===== -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><h2>设置</h2><p>个性化你的错题本</p></div>
+      <div class="settings-group"><h3>复习提醒</h3>
+        <div class="setting-row"><div><div class="sr-label">每日复习提醒</div><div class="sr-desc">早上提醒今日待复习题目</div></div><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;"><option>08:00</option></select></div>
+        <div class="setting-row"><div><div class="sr-label">未完成二次提醒</div><div class="sr-desc">晚上检查未完成复习并再次提醒</div></div><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;"><option>19:00</option></select></div>
+      </div>
+      <div class="settings-group"><h3>复习间隔（长期记忆模式）</h3><div class="card" style="margin-bottom:12px;"><p style="font-size:13px;line-height:1.8;color:var(--text-secondary);"><b>未掌握</b>：1天后复习<br><b>模糊</b>：按 1→3→7→15→30 天间隔<br><b>掌握</b>：进入长期记忆，30→60→90→180 天间隔，永不停止，防止遗忘<br>每次反馈"未掌握"则重置为1天。</p></div></div>
+      <div class="settings-group"><h3>数据管理</h3>
+        <div class="setting-row"><div><div class="sr-label">重置本地数据</div><div class="sr-desc">清除浏览器中保存的复习进度，重新加载默认数据</div></div><button class="btn btn-danger btn-sm" onclick="resetLocalData()">重置</button></div>
+        <div class="setting-row"><div><div class="sr-label">当前版本</div><div class="sr-desc" id="appVersionDisplay">v1.2.0</div></div><button class="btn btn-outline btn-sm" onclick="forceRefresh()">检查更新</button></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 课程分类体系（学科 → 课题 → 子课题） =====
+const curriculum = {
+  '中国语文': {
+    '12篇范文': ['論仁論孝論君子','魚我所欲也','逍遙遊','勸學','廉頗藺相如列傳','出師表','始得西山宴遊記','師說','唐詩三首','岳陽樓記','六國論','詞三首']
+  },
+  '英国语文': {
+    '卷一 阅读': ['主旨题','细节题','推断题','词汇题','修辞题'],
+    '卷二 写作': ['议论文','书信','报告','文章改写'],
+    '卷三 综合能力': ['整合信息','观点表达','格式规范'],
+    '卷四 口语': ['小组讨论','个人短讲']
+  },
+  '数学（必修）': {
+    '数与代数': ['一元二次方程','函数及其图像','指数与对数函数','等差等比数列','不等式与线性规划','多项式','变分','续函数与图像变换'],
+    '度量图形与空间': ['直线方程','圆的基本性质','轨迹','圆方程','续三角学'],
+    '数据处理': ['排列与组合','续概率','离差的度量','统计的应用及误用'],
+    '进阶': ['数学的进一步应用']
+  },
+  '数学 M2': {
+    '基础知识': ['数学归纳法','二项式定理'],
+    '代数': ['矩阵与行列式','向量','三角函数恒等式'],
+    '微积分': ['极限','导数与微分','微分应用','不定积分','定积分','积分应用'],
+    '进阶': ['微分方程']
+  },
+  '物理': {
+    '热和气体': ['温度热和内能','传递过程','物态变化','气体'],
+    '力和运动': ['位置和运动','力和运动','抛体运动','功能量和功率','动量','匀速圆周运动','万有引力'],
+    '波动': ['波的性质','光','声音'],
+    '电和磁': ['静电学','电路和家居用电','电磁学'],
+    '放射性和核能': ['辐射和放射性','原子模型','核能'],
+    '原子世界': ['卢瑟福原子模型','光电效应','玻尔氢原子模型','粒子或波','纳米世界'],
+    '能量和能源的使用': ['家居用电','建筑与交通能源效益','可再生与不可再生能源','能源社会与环境']
+  },
+  '化学': {
+    '行星地球': ['大气海洋岩石','分离纯化方法'],
+    '微观世界I': ['原子结构','化学键','化学式'],
+    '金属': ['金属提取','反应性序列','腐蚀与防护','合金'],
+    '酸和盐基': ['酸碱性质','中和反应','盐的制备','pH与指示剂'],
+    '化石燃料和碳化合物': ['化石燃料与分馏','烷烃烯烃','加成取代反应','分离提纯'],
+    '微观世界II': ['分子间作用力','结构与性质'],
+    '氧化还原反应和化学电池': ['氧化还原反应','化学电池','电解'],
+    '化学反应和能量': ['焓变','赫斯定律'],
+    '反应速率': ['影响因素','速率方程与级数','活化能与催化剂'],
+    '化学平衡': ['动态平衡','勒夏特列原理','平衡常数'],
+    '碳化合物的化学': ['醇醛酮羧酸','酯化','聚合物','分离提纯','有机物制备与分析'],
+    '化学世界中的规律': ['元素周期律','周期性'],
+    '工业化学': ['工业化学'],
+    '分析化学': ['分离提纯','光谱分析','滴定分析','有机物制备与分析']
+  }
+};
+const subjectList = ['化学','物理','数学（必修）','数学 M2','中国语文','英国语文'];
+const errorTypes = ['概念不清','计算失误','思路错误','审题错误','时间不够','粗心大意'];
+
+// ===== 真实错题数据（仅用户实际录入的） =====
+const defaultErrors = {
+  '0001': {
+    id:'0001', subject:'化学', topic:'反应速率', subtopic:'影响因素',
+    questionType:'选择题', title:'消失十字实验适用反应判断',
+    errorType:'概念不清', difficulty:'中等',
+    date:'2026-10-17', source:'2017 DSE 卷一 Q28',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'A', correctAnswer:'D',
+    question:'Of which of the following reactions can the rate be studied by the "disappearing cross" set-up?\nA. CaCl₂(aq) + H₂SO₄(aq) → CaSO₄(s) + 2HCl(aq)\nB. Na₂CO₃(aq) + 2HCl(aq) → 2NaCl(aq) + H₂O(l) + CO₂(g)\nC. 2FeSO₄(aq) + H₂SO₄(aq) + I₂(aq) → Fe₂(SO₄)₃(aq) + 2HI(aq)\nD. Na₂S₂O₃(aq) + 2HCl(aq) → S(s) + SO₂(aq) + H₂O(l) + 2NaCl(aq)',
+    wrongDesc:'误认为 CaSO₄ 是不溶性沉淀，可以用消失十字装置测量。实际上 CaSO₄ 微溶，稀溶液中不会产生明显浑浊。',
+    correctDesc:'Na₂S₂O₃ 与 HCl 反应生成淡黄色硫沉淀（S↓），使溶液变浑浊，是消失十字实验的经典反应。',
+    analysis:'<b>逐项分析：</b><br>A. CaSO₄ 微溶，稀溶液中浑浊不明显 — 不适用<br>B. 生成 CO₂ 气体，溶液不变浑浊 — 不适用（应用量气筒）<br>C. 无沉淀生成 — 不适用<br>D. 生成 S 沉淀 — 正确',
+    knowledge:'1. 消失十字实验适用条件：反应必须生成不溶性沉淀<br>2. 常见沉淀反应：Na₂S₂O₃ + HCl → S↓；AgNO₃ + HCl → AgCl↓；BaCl₂ + H₂SO₄ → BaSO₄↓<br>3. CaSO₄ 的溶解性：微溶，稀溶液中不产生明显沉淀<br>4. 其他测速率方法：生成气体→量气筒；颜色变化→比色法',
+    hint:'1. 这个装置叫"消失的十字"实验，通过观察什么现象计时？\n2. 要让十字"消失"，溶液需要发生什么变化？\n3. 四个选项中，哪个反应会生成不溶性固体使溶液变浑浊？\n4. CaSO₄ 是沉淀吗？它的溶解性如何？',
+    options:[
+      {letter:'A', text:'CaCl₂ + H₂SO₄ → CaSO₄ + 2HCl', correct:false, reason:'CaSO₄ 微溶，稀溶液中浑浊不明显'},
+      {letter:'B', text:'Na₂CO₃ + 2HCl → 2NaCl + H₂O + CO₂', correct:false, reason:'生成气体，溶液不变浑浊，应用量气筒'},
+      {letter:'C', text:'2FeSO₄ + H₂SO₄ + I₂ → Fe₂(SO₄)₃ + 2HI', correct:false, reason:'无沉淀生成'},
+      {letter:'D', text:'Na₂S₂O₃ + 2HCl → S + SO₂ + H₂O + 2NaCl', correct:true, reason:'生成 S 淡黄色沉淀，正确'}
+    ],
+    inquiry:[],
+    discussion:[
+      {role:'user', text:'为什么 CaSO₄ 微溶就不能用？有时候不是也会浑浊吗？'},
+      {role:'ai', text:'消失十字实验要求浑浊程度足够明显、产生速度可测量。CaSO₄ 微溶意味着稀溶液中沉淀量很少，浑浊不明显，计时误差大。而 Na₂S₂O₃ + HCl 生成的 S 沉淀是大量淡黄色沉淀，效果明显。'}
+    ],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/nZ78sPbczD', label:'题目'}
+    ]
+  },
+  '0002': {
+    id:'0002', subject:'化学', topic:'化石燃料和碳化合物', subtopic:'分离提纯',
+    questionType:'长答题', title:'苯甲酸与hexan-3-one的分液漏斗分离',
+    errorType:'思路错误', difficulty:'中等',
+    date:'2026-10-18', source:'G12 Chemistry Chapter Test 1 Q2',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'只描述了分液漏斗的物理操作：加入混合物→倒置45°摇晃→频繁放气→分层后放出液体',
+    correctAnswer:'加过量NaOH(aq)→苯甲酸变苯甲酸钠溶于水层→分液取水层→加过量HCl(aq)再生苯甲酸→过滤干燥',
+    wrongDesc:'完全没有想到利用苯甲酸的酸性做化学转化。只描述了分液漏斗的物理操作步骤，不知道要先加NaOH把苯甲酸变成水溶性的苯甲酸钠，从而与有机相的hexan-3-one分离。',
+    correctDesc:'苯甲酸是有机酸，hexan-3-one是中性酮。利用酸碱反应：苯甲酸 + NaOH → 苯甲酸钠（溶于水）+ 水。苯甲酸钠进入水层，hexan-3-one留在有机层，分液后取水层，加HCl再生苯甲酸，过滤得到固体。',
+    analysis:'<b>核心思路：化学转化 + 物理分离</b><br>1. 两种有机物都溶于有机溶剂，直接分液无法分离<br>2. 利用苯甲酸的酸性（-COOH），加NaOH使其变成离子型的苯甲酸钠（C₆H₅COO⁻Na⁺），溶于水不溶于有机溶剂<br>3. hexan-3-one是中性酮，不与NaOH反应，留在有机层<br>4. 分液后取含水层（含苯甲酸钠）<br>5. 加强酸HCl，苯甲酸钠 + HCl → 苯甲酸（微溶于水，析出固体）+ NaCl<br>6. 过滤、干燥得到纯苯甲酸<br><br><b>为什么不能直接分液：</b>两者都是有机物，都溶于有机相，没有密度差异导致的自然分层。必须通过化学反应改变其中一种的溶解性。',
+    knowledge:'1. 苯甲酸（C₆H₅COOH）是弱酸，pKa≈4.2，可与NaOH反应生成水溶性苯甲酸钠<br>2. 酮（如hexan-3-one）是中性化合物，不与稀NaOH反应<br>3. 分离有机酸的通用方法：加碱→成盐溶于水→分液→加酸→有机酸析出<br>4. 分液漏斗操作：加液→塞紧→倒置摇晃→放气（打开活塞）→静置分层→下层从下口放出，上层从上口倒出<br>5. 干燥剂选择：苯甲酸固体可用滤纸吸干或干燥器干燥',
+    hint:'1. 苯甲酸和hexan-3-one都是有机物，都溶于有机溶剂，直接分液能分开吗？\n2. 苯甲酸有什么官能团？它有酸性吗？\n3. 如果加NaOH，苯甲酸会发生什么反应？生成物溶于水还是有机溶剂？\n4. hexan-3-one会和NaOH反应吗？\n5. 分液后水层里有什么？怎么把苯甲酸变回来？',
+    steps:[
+      {text:'将混合物溶于乙醚/乙酸乙酯/二氯甲烷等有机溶剂', mark:'', lost:false},
+      {text:'加入过量NaOH(aq)，苯甲酸与NaOH反应生成苯甲酸钠（溶于水层）', mark:'1', lost:true},
+      {text:'摇晃分液漏斗，放气，静置分层', mark:'', lost:false},
+      {text:'放出并收集水层（含苯甲酸钠），弃去有机层（含hexan-3-one）', mark:'1', lost:true},
+      {text:'向水层加入过量HCl(aq)，苯甲酸钠被质子化再生为苯甲酸（析出固体）', mark:'1', lost:true},
+      {text:'过滤，用滤纸吸干/干燥器/烘箱干燥苯甲酸', mark:'1', lost:true}
+    ],
+    lostPoints:[
+      {step:'加NaOH', reason:'完全遗漏这一关键化学步骤，不知道利用酸碱反应转化溶解性'},
+      {step:'收集水层', reason:'只描述了物理分液操作，没有说明取哪一层、为什么'},
+      {step:'加HCl再生', reason:'不知道加酸可以把苯甲酸钠变回苯甲酸'},
+      {step:'过滤干燥', reason:'没有提到最终得到固体苯甲酸的步骤'}
+    ],
+    inquiry:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/ldmgqk6vs2', label:'你的答案'},
+      {url:'https://aka.doubaocdn.com/s/MypX2wC0T1', label:'标准答案'}
+    ]
+  },
+  '0003': {
+    id:'0003', subject:'化学', topic:'氧化还原反应和化学电池', subtopic:'电解',
+    questionType:'长答题', title:'串联电解池——电极判断与产物分析',
+    errorType:'粗心大意', difficulty:'中等偏难',
+    date:'2026-10-18', source:'G12 Chemistry Chapter Test 1 Q5',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'(a) B（正确）；(b) CuBr₂（缺concentrated）；(c) Cl₂，因为B是anode、C是cathode、D是anode，D发生氧化，CuCl₂浓度大所以Cl₂形成而不是H₂',
+    correctAnswer:'(a) B；(b) concentrated copper(II) bromide solution；(c) Chlorine，因为beaker Y中Cl⁻浓度远大于OH⁻，Cl⁻ preferentially discharged生成Cl₂',
+    wrongDesc:'(b) 缺少必写关键词"concentrated"，marking scheme明确不接受没有这个词的答案；(c) 答案Cl₂正确，但解释不规范——没有用"preferentially discharged"这个DSE核心术语，且比较对象应该是Cl⁻和OH⁻的浓度，而不是说"CuCl₂浓度大"。',
+    correctDesc:'(b) 必须写"concentrated"，因为稀溶液中OH⁻会优先放电生成O₂，只有浓溶液中Br⁻才能优先放电生成Br₂；(c) D是anode发生氧化，beaker Y中5M CuCl₂是浓溶液，Cl⁻浓度远高于OH⁻，根据浓度效应，Cl⁻优先放电（preferential discharge）生成Cl₂。',
+    analysis:'<b>(a) 电极判断：</b>串联电路中电流方向一致。A上Cu析出（还原）→A是cathode→B是anode（氧化，Br⁻→Br₂）。<br><br><b>(b) 为什么必须写concentrated：</b>电解CuBr₂时，anode可能放电的阴离子有Br⁻和OH⁻。稀溶液中OH⁻优先放电生成O₂；浓溶液中Br⁻浓度高，优先放电生成Br₂。题目说B上生成bromine，说明是浓溶液，必须写"concentrated"。<br><br><b>(c) D电极产物：</b>串联电路中，B(anode)→C(cathode)→D(anode)。beaker Y是5M CuCl₂浓溶液，D是anode，可能放电的阴离子：Cl⁻（浓度高）和OH⁻（浓度低）。根据浓度效应，Cl⁻ preferentially discharged：2Cl⁻ → Cl₂ + 2e⁻。<br><br><b>DSE术语规范：</b>必须写"preferentially discharged"（优先放电），不能只说"浓度大所以生成"。比较对象是阴离子浓度（Cl⁻ vs OH⁻），不是电解质整体浓度。',
+    knowledge:'1. 串联电解池：所有电解池电流相同，电极交替为cathode/anode<br>2. 阳极放电顺序（浓度效应）：浓溶液中卤素离子（Cl⁻/Br⁻/I⁻）优先于OH⁻放电；稀溶液中OH⁻优先<br>3. 必须写"concentrated"的场景：电解浓NaCl/浓CuBr₂等，说明卤素离子优先放电<br>4. Preferential discharge（优先放电）：DSE电解题核心术语，必须掌握<br>5. 阴极放电顺序：Cu²⁺ > H⁺ > Na⁺（金属活动性顺序反向）<br>6. 铂电极是惰性电极，不参与反应',
+    hint:'1. 串联电路中，电流方向是什么？A上Cu析出说明A是什么极？\n2. (b) 题目说B上生成bromine，什么情况下Br⁻会优先于OH⁻放电？溶液需要浓还是稀？\n3. (c) D是阳极还是阴极？beaker Y里有哪些阴离子？\n4. 浓溶液中Cl⁻和OH⁻哪个优先放电？DSE里这个现象叫什么？\n5. 写解释时，比较的是Cl⁻和OH⁻的浓度，还是CuCl₂整体浓度？',
+    steps:[
+      {text:'(a) A上Cu析出（还原）→A为cathode→B为anode', mark:'1', lost:false},
+      {text:'(b) B上生成Br₂说明Br⁻优先放电，必须是concentrated CuBr₂溶液', mark:'1', lost:true},
+      {text:'(c) D为anode，发生氧化反应', mark:'', lost:false},
+      {text:'beaker Y中Cl⁻浓度远大于OH⁻（5M浓溶液）', mark:'1', lost:true},
+      {text:'Cl⁻ preferentially discharged生成Cl₂：2Cl⁻ → Cl₂ + 2e⁻', mark:'1', lost:true}
+    ],
+    lostPoints:[
+      {step:'(b) concentrated', reason:'缺少必写关键词，marking scheme明确不接受无concentrated的答案'},
+      {step:'(c) Cl⁻ vs OH⁻浓度比较', reason:'说"CuCl₂浓度大"不规范，应比较Cl⁻和OH⁻的浓度'},
+      {step:'(c) preferentially discharged', reason:'未使用DSE核心术语，解释不规范'}
+    ],
+    inquiry:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/3OSi2l0eEo', label:'你的答案'},
+      {url:'https://aka.doubaocdn.com/s/Ljm3ASCfty', label:'标准答案'}
+    ]
+  },
+  '0004': {
+    id:'0004', subject:'化学', topic:'化石燃料和碳化合物', subtopic:'化石燃料与分馏',
+    questionType:'长答题', title:'分馏柱分离沸点相近液体的原理',
+    errorType:'概念不清', difficulty:'简单',
+    date:'2026-10-18', source:'G12 Chemistry Chapter Test 1 Q(d)',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'玻璃球有大的接触面积使溶液回流，所以沸点相近的液体可以更清楚地分离',
+    correctAnswer:'分馏柱中的玻璃珠提供大表面积，使repeated vaporization and condensation（反复汽化和冷凝）发生，低沸点组分在蒸气中越来越富集，最终成为馏出液',
+    wrongDesc:'提到了large surface area，但没有说出核心机制——repeated vaporization and condensation（反复汽化和冷凝）。说"distillate the solution back"表述不准确，没有解释为什么表面积大就能分离沸点相近的液体。',
+    correctDesc:'分馏柱内有玻璃珠/玻璃环，提供大的表面积。热蒸气上升时在玻璃珠表面冷凝，冷凝液被下方上升的热蒸气再次汽化，如此反复汽化-冷凝。每次循环中，低沸点组分更容易汽化进入蒸气，高沸点组分更容易冷凝回流。经过多次循环后，蒸气中低沸点组分越来越纯，最终从柱顶馏出。',
+    analysis:'<b>分馏柱的核心原理：反复汽化-冷凝</b><br>1. 简单蒸馏只有一次汽化-冷凝，对于沸点相近的液体（如乙醇78°C和水100°C）分离效果差<br>2. 分馏柱提供大表面积，相当于在柱子里进行了"很多次简单蒸馏"<br>3. 蒸气上升→在玻璃珠表面冷凝（高沸点组分更容易冷凝）→冷凝液下流→被下方热蒸气再次汽化（低沸点组分更容易汽化）<br>4. 每一次循环，蒸气中低沸点组分的比例都增加一点<br>5. 经过足够多次循环后，柱顶蒸气几乎是纯的低沸点组分<br><br><b>关键词：</b>large surface area + repeated vaporization and condensation，两个都要写才能拿满分。只写large surface area只能得部分分。',
+    knowledge:'1. 分馏（fractional distillation）用于分离沸点相近的互溶液体混合物<br>2. 分馏柱（fractionating column）内装玻璃珠/玻璃环，提供大表面积<br>3. 核心机制：repeated vaporization and condensation（反复汽化和冷凝）<br>4. 低沸点组分更容易汽化，在蒸气中富集；高沸点组分更容易冷凝，回流到烧瓶<br>5. 应用：石油分馏、乙醇和水分离、液态空气分离<br>6. 简单蒸馏 vs 分馏：简单蒸馏一次汽化冷凝，适合沸点差异大（>30°C）的混合物；分馏多次循环，适合沸点相近的混合物',
+    hint:'1. 分馏柱里的玻璃珠有什么作用？\n2. 热蒸气上升遇到温度较低的玻璃珠会发生什么？\n3. 冷凝后的液体流下来，遇到下方更热的蒸气又会发生什么？\n4. 这个"汽化→冷凝→再汽化→再冷凝"的过程叫什么？\n5. 每次循环中，低沸点和高沸点组分哪个更容易留在蒸气里？',
+    steps:[
+      {text:'分馏柱中的玻璃珠提供large surface area', mark:'', lost:false},
+      {text:'使repeated vaporization and condensation（反复汽化和冷凝）在柱内发生', mark:'1', lost:true},
+      {text:'每次循环中低沸点组分更容易汽化进入蒸气，高沸点组分冷凝回流', mark:'', lost:false},
+      {text:'最终蒸气中低沸点组分越来越富集，成为馏出液', mark:'', lost:false}
+    ],
+    lostPoints:[
+      {step:'repeated vaporization and condensation', reason:'核心机制未写出，只提到表面积大，没有解释为什么表面积大就能分离'}
+    ],
+    inquiry:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/arV277SUve', label:'你的答案'},
+      {url:'https://aka.doubaocdn.com/s/VJq27Lp57z', label:'标准答案'}
+    ]
+  },
+  '0005': {
+    id:'0005', subject:'化学', topic:'分析化学', subtopic:'有机物制备与分析',
+    questionType:'长答题', title:'环己烯制备——液液萃取、分馏装置与红外鉴定',
+    errorType:'思路错误', difficulty:'中等偏难',
+    date:'2026-10-18', source:'2021 DSE 化学卷二 Q3(b)',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'(b)(i) 说磷酸不溶于有机物，直接分液漏斗摇晃分层；(b)(ii)(1) 装置图多处错误；(b)(ii)(2) 只说83°C不是162°C，红外无O-H峰',
+    correctAnswer:'(b)(i) 加Na₂CO₃/NaHCO₃/NaOH(aq)，摇晃放气，弃水层取有机层；(b)(ii)(1) 标准分馏装置图；(b)(ii)(2) 沸点83°C=环己烯，IR有C=C峰(1610-1680)无O-H峰(3230-3670)',
+    question:'(b) 用浓磷酸作脱水剂从环己醇制备环己烯，得到含环己烯、磷酸和环己醇的液态混合物（沸点：环己烯83°C，环己醇162°C）\n(i) 描述如何用液液萃取和水溶液去除混合物中的磷酸（3分）\n(ii) 去除磷酸后，对剩余混合物分馏得到沸点83°C的馏出液\n(1) 画出分馏装置的标注图（2分）\n(2) 借助沸点和红外光谱，如何支持以下陈述："馏出液是环己烯，且不含环己醇"（2分）\n红外特征吸收：C=C 1610-1680 cm⁻¹，O-H(醇) 3230-3670 cm⁻¹',
+    wrongDesc:'三个小问全部失分：(i) 不知道液液萃取需要加入碱性水溶液（Na₂CO₃/NaHCO₃/NaOH）中和磷酸，误以为磷酸不溶于有机物直接分液；(ii)(1) 分馏装置图绘制错误（温度计位置、冷凝管水流方向、分馏柱等）；(ii)(2) 只证明了"没有环己醇"（无O-H峰），没有证明"是环己烯"（应有C=C峰），沸点部分表述不规范。',
+    correctDesc:'(i) 磷酸是无机酸，可溶于水或与碱反应生成盐。加入Na₂CO₃(aq)等碱性溶液，磷酸进入水层，有机物（环己烯、环己醇）留在有机层，分液即可分离。\n(ii)(1) 标准装置：梨形瓶+分馏柱（内有玻璃珠/玻璃环）+温度计（水银球位于支管处）+冷凝管（水下进上出）+尾接管+锥形瓶。\n(ii)(2) 需同时证明两点：①沸点83°C对应环己烯（不是162°C的环己醇）；②IR有C=C吸收峰（1610-1680 cm⁻¹）证明含双键=环己烯，无O-H宽峰（3230-3670 cm⁻¹）证明无环己醇。',
+    analysis:'<b>(b)(i) 液液萃取原理：</b><br>液液萃取利用物质在两种不互溶液体中的溶解度差异分离。磷酸是极性无机酸，可溶于水；环己烯和环己醇是有机物，难溶于水。<br>但仅加水可能分层不充分，标准做法是加碱性溶液（Na₂CO₃/NaHCO₃/NaOH），磷酸与碱反应生成磷酸盐（离子化合物，更易溶于水），确保完全进入水层。<br>操作：加碱液→摇晃（不时放气）→静置分层→弃去下层水层→保留上层有机层。<br><br><b>(b)(ii)(1) 分馏装置要点：</b><br>① 梨形瓶（pear-shaped flask）装混合物，加热<br>② 分馏柱（fractionating column）内装玻璃珠/玻璃环，提供大表面积<br>③ 温度计水银球位于蒸馏头支管处，测量蒸气温度<br>④ 冷凝管（condenser）水下进上出（water in下，water out上）<br>⑤ 尾接管（adapter）+锥形瓶（conical flask）收集<br><br><b>(b)(ii)(2) 红外光谱鉴定逻辑：</b><br>题目要求证明两个命题：<br>① "是环己烯" → 必须有C=C双键的证据：IR在1610-1680 cm⁻¹有吸收峰<br>② "不含环己醇" → 必须无O-H的证据：IR在3230-3670 cm⁻¹无宽吸收峰<br>沸点83°C也支持是环己烯（环己醇是162°C）。<br>只写"无O-H峰"只能证明没有醇，不能证明是烯烃——可能是烷烃或其他物质。必须同时有C=C峰才能确认是环己烯。',
+    knowledge:'1. 液液萃取：利用溶解度差异，加碱使有机酸/无机酸成盐进入水层\n2. 常见洗涤液：Na₂CO₃(aq)/NaHCO₃(aq)除酸；水除水溶性杂质；CaCl₂(aq)除醇\n3. 分馏装置：梨形瓶+分馏柱+温度计+冷凝管+尾接管+收集瓶\n4. 冷凝管水流：下进上出（water in底部进，water out顶部出）\n5. 温度计位置：水银球与蒸馏头支管平齐\n6. IR光谱：C=C 1610-1680 cm⁻¹（烯烃）；O-H(醇) 3230-3670 cm⁻¹（宽峰）；C=O 1680-1800 cm⁻¹\n7. 鉴定有机物需同时证明"有什么"和"没有什么"，不能只答一半',
+    hint:'1. (i) 磷酸是什么性质的物质？它溶于水吗？加什么能让它更彻底地进入水层？\n2. (i) 分液后取哪一层？有机物密度比水大还是小？\n3. (ii)(1) 分馏和简单蒸馏的装置有什么区别？分馏柱里有什么？\n4. (ii)(1) 冷凝管的水应该从哪头进哪头出？温度计放哪里？\n5. (ii)(2) 题目要证明两个命题："是环己烯"和"没有环己醇"，分别需要什么证据？\n6. (ii)(2) 环己烯有什么官能团？环己醇有什么官能团？IR分别在什么波数？',
+    steps:[
+      {text:'(b)(i) 向分液漏斗中混合物加入Na₂CO₃(aq)/NaHCO₃(aq)/NaOH(aq)', mark:'1', lost:true},
+      {text:'摇晃并不时打开活塞放气', mark:'', lost:false},
+      {text:'静置分层，弃去下层（水层，含磷酸盐），收集上层（有机层）', mark:'1', lost:true},
+      {text:'(b)(ii)(1) 装置图：梨形瓶+分馏柱（内有玻璃珠）+温度计+冷凝管+尾接管+锥形瓶', mark:'1', lost:true},
+      {text:'标注：water in（下进）、water out（上出）、heat', mark:'1', lost:true},
+      {text:'(b)(ii)(2) 沸点83°C对应环己烯（环己醇为162°C）', mark:'1', lost:true},
+      {text:'IR有C=C峰（1610-1680 cm⁻¹）证明含双键=环己烯', mark:'', lost:true},
+      {text:'IR无O-H宽峰（3230-3670 cm⁻¹）证明无环己醇', mark:'1', lost:false}
+    ],
+    lostPoints:[
+      {step:'(b)(i) 加碱性溶液', reason:'完全遗漏，不知道液液萃取需要加Na₂CO₃/NaOH中和磷酸'},
+      {step:'(b)(i) 取有机层', reason:'只说"分离两层"，未说明取哪一层'},
+      {step:'(b)(ii)(1) 装置图', reason:'温度计位置、冷凝管水流、分馏柱等多处绘制错误'},
+      {step:'(b)(ii)(2) 证明是环己烯', reason:'只证明了无环己醇（无O-H峰），未证明有C=C峰'}
+    ],
+    inquiry:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/rlUN6NE4zK', label:'题目'},
+      {url:'https://aka.doubaocdn.com/s/LXjUNyvZIG', label:'你的答案(i)和装置图'},
+      {url:'https://aka.doubaocdn.com/s/pK6uS6PI3d', label:'你的答案(ii)(2)'},
+      {url:'https://aka.doubaocdn.com/s/zFv0RWgVMV', label:'标准答案(i)'},
+      {url:'https://aka.doubaocdn.com/s/RVXJvjf6Od', label:'标准答案装置图和(ii)(2)'}
+    ]
+  },
+  '0006': {
+    id:'0006', subject:'物理', topic:'原子世界', subtopic:'光电效应',
+    questionType:'长答题', title:'光电效应实验——遏止电压、光子能量与波动理论矛盾',
+    errorType:'概念不清', difficulty:'中等',
+    date:'2026-10-18', source:'Physics Mock Exam 1 Paper 2 Q2',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-18',
+    yourAnswer:'(a) 不会解释；(b)(i) 误以为work function就是stopping potential；(c)(i) 知道光强增大会增强电流但忘记公式；(c)(ii) 学过波动理论但忘记预测',
+    correctAnswer:'(a) 光电子初动能不同，电压增大时初动能小的先被阻止，电流渐变；(b)(i) Vs=2V；(b)(ii) E=5.8eV；(b)(iii) λ≈214nm；(c)(i) 光强增大→饱和电流增大，遏止电压不变（仍2V）；(c)(ii) 波动理论预测光强增大→遏止电压增大，实验结果不变，矛盾',
+    question:'Katie进行光电效应实验测量金属板X的遏止电压。金属板X的逸出功为3.8 eV。图2.2为I-V图像，电流随电压增大逐渐减小，在V=2V时降为0。\n(a) 电压从0增大时，电流表读数不是突然降到0而是逐渐减小，解释原因（2分）\n(b)(i) 写出金属X的遏止电压（1分）\n(b)(ii) 求所用光的光子能量（1分）\n(b)(iii) 求所用光的波长（2分）\n(c)(i) 用更高强度的光重复实验，复制图2.2并画出新的I-V图，标记为L（2分）\n(c)(ii) 参考(c)(i)的图，说明为什么光的波动理论不能解释光电效应实验结果（2分）',
+    wrongDesc:'四个小问中三个失分：(b)(i) 混淆逸出功（work function）和遏止电压（stopping potential），以为3.8eV就是遏止电压；(c)(i) 忘记光强只影响光子数量不影响单个光子能量，导致遏止电压不变；(c)(ii) 遗忘波动理论的核心预测——光强越大能量越大，遏止电压应增大，与实验结果矛盾。(a) 虽然知道概念但不会组织语言解释渐变现象。',
+    correctDesc:'(a) 光电子逸出时初动能大小不一，反向电压增大时初动能小的先被阻止，电流逐渐减小，直到电压等于最大初动能对应的遏止电压时电流才为0。(b)(i) 从图中读出I=0时V=2V，即遏止电压Vs=2V。(b)(ii) 爱因斯坦方程E=φ+Kmax=3.8+2=5.8eV。(b)(iii) λ=hc/E=1240/5.8≈214nm。(c)(i) 光强增大→光子数增多→光电流增大，但光子能量不变（频率不变）→最大初动能不变→遏止电压仍为2V。(c)(ii) 波动理论认为光强增大则光能量增大，光电子获得能量更多，遏止电压应增大；但实验中遏止电压不变，说明光能量是量子化的（光子），与光强无关。',
+    analysis:'<b>(a) 电流渐变的原因：</b><br>光电子逸出金属时，获得的能量是光子能量减去逸出功，但电子在金属内部的位置不同、逸出路径不同，导致实际逸出时的初动能有一个分布——有的大有的小。反向电压增大时，初动能小于eV的光电子被阻止，到不了阳极；初动能大于eV的还能到达。所以随着V增大，越来越多光电子被阻止，电流逐渐减小。当eV = Kmax时，所有光电子都被阻止，电流为0。<br><br><b>(b)(i) 遏止电压 vs 逸出功：</b><br>这是两个完全不同的量！<br>• 逸出功 φ = 3.8 eV：把电子从金属表面"拉出来"需要的最小能量，是金属的固有属性<br>• 遏止电压 Vs = 2 V：刚好阻止所有光电子到达阳极的反向电压，对应光电子的最大初动能 Kmax = eVs<br>从图2.2中，电流I=0对应的电压就是遏止电压，即Vs=2V。<br><br><b>(b)(ii) 光子能量：</b><br>爱因斯坦光电方程：E = φ + Kmax<br>Kmax = e × Vs = 1e × 2V = 2 eV<br>E = 3.8 + 2 = 5.8 eV<br><br><b>(b)(iii) 波长：</b><br>E = hc/λ → λ = hc/E<br>常用值 hc = 1240 eV·nm<br>λ = 1240/5.8 ≈ 213.8 nm ≈ 214 nm<br><br><b>(c)(i) 光强增大的影响：</b><br>光强 = 单位时间单位面积的能量 = (光子数 × 每个光子能量) / (面积 × 时间)<br>频率不变时，每个光子能量不变，光强增大意味着光子数增多。<br>• 光子数增多 → 打出的光电子数增多 → 饱和光电流增大<br>• 每个光子能量不变 → 光电子最大初动能不变 → 遏止电压不变（仍为2V）<br>所以新图L在V=0时电流更大，但两条线在V=2V处交汇（都降到0）。<br><br><b>(c)(ii) 波动理论的矛盾：</b><br>波动理论认为光是连续的电磁波，光强越大，波携带的能量越多，电子吸收的能量也越多，因此光电子的最大初动能应该越大，遏止电压应该随光强增大而增大。<br>但实验结果：光强增大，遏止电压不变（始终2V）。<br>这个矛盾只能用光子理论解释：光的能量是一份一份的（光子），每个光子能量E=hf只由频率决定，与光强无关。光强只决定光子数量，不决定单个光子的能量。',
+    knowledge:'1. 逸出功（work function）φ：电子逸出金属所需最小能量，金属固有属性<br>2. 遏止电压（stopping potential）Vs：刚好阻止所有光电子的反向电压，Kmax=eVs<br>3. 爱因斯坦光电方程：E = φ + Kmax = hf<br>4. 光电子初动能有分布（不是都一样大），所以I-V曲线是渐变而非突变<br>5. 光强增大 → 光子数增多 → 光电流增大；但遏止电压不变（频率不变则光子能量不变）<br>6. 光电流公式推导：I电流 = (I光强 × A × e) / (hf)，与光强成正比，与频率成反比<br>7. 波动理论预测：光强增大→遏止电压增大；实验结果：遏止电压不变→证明光是粒子（光子）<br>8. hc = 1240 eV·nm（常用换算值，DSE可直接用）',
+    hint:'1. (a) 所有光电子的初动能都一样大吗？如果不一样，电压增大时谁先被阻止？\n2. (b)(i) 遏止电压在I-V图上对应哪个点？逸出功和遏止电压是同一个东西吗？\n3. (b)(ii) 爱因斯坦光电方程是什么？最大初动能怎么从遏止电压算？\n4. (b)(iii) 光子能量和波长的关系公式是什么？hc等于多少？\n5. (c)(i) 光强增大意味着什么变多了？每个光子的能量变了吗？遏止电压由什么决定？\n6. (c)(ii) 波动理论认为光强和能量是什么关系？实验中遏止电压随光强变化了吗？',
+    steps:[
+      {text:'(a) 光电子初动能大小不一，反向电压增大时初动能小的先被阻止', mark:'1', lost:true},
+      {text:'直到eV=Kmax时所有光电子被阻止，电流为0', mark:'1', lost:true},
+      {text:'(b)(i) 从图读出I=0时V=2V，Vs=2V', mark:'1', lost:true},
+      {text:'(b)(ii) E=φ+eVs=3.8+2=5.8eV', mark:'1', lost:false},
+      {text:'(b)(iii) λ=hc/E=1240/5.8≈214nm', mark:'2', lost:false},
+      {text:'(c)(i) 光强增大→光子数增多→饱和电流增大', mark:'1', lost:true},
+      {text:'频率不变→光子能量不变→遏止电压仍为2V，两线在V=2V交汇', mark:'1', lost:true},
+      {text:'(c)(ii) 波动理论预测光强增大→遏止电压增大', mark:'1', lost:true},
+      {text:'实验中遏止电压不变→矛盾→证明光是量子化的光子', mark:'1', lost:true}
+    ],
+    lostPoints:[
+      {step:'(a) 初动能分布解释', reason:'知道概念但不会组织语言解释渐变现象'},
+      {step:'(b)(i) 遏止电压', reason:'混淆逸出功和遏止电压，以为3.8eV就是遏止电压'},
+      {step:'(c)(i) 遏止电压不变', reason:'忘记光强只影响光子数量，不影响单个光子能量和遏止电压'},
+      {step:'(c)(ii) 波动理论预测', reason:'遗忘波动理论核心预测——光强增大则遏止电压增大'}
+    ],
+    inquiry:[
+      {user:'为什么电流电压图中的曲线是先趋向下再趋向上的？', ai:'光电子逸出时的初动能有分布（不是都一样大）。反向电压V很小时，只有初动能非常小的那部分电子被阻止，大部分电子还能到达阳极，所以电流下降慢；V接近遏止电压Vs时，剩下的都是初动能接近Kmax的电子，数量少且V稍增就有大批被阻止，所以电流下降快。因此曲线是下凸（concave up）形状——先平缓下降，再快速弯向零点。如果所有光电子初动能都相同，曲线会是直角形状而非渐变。'}
+    ],
+    discussion:[
+      {role:'user', text:'能帮我把intensity和电流有关的公式推一遍吗'},
+      {role:'ai', text:'光强I=能量/(面积×时间)=(n×hf)/(A×t)，所以单位时间光子数n/t=(I×A)/(hf)。光电流=单位时间光电子数×e=(n×e)/t。假设一个光子打一个电子，代入得I电流=(I光强×A×e)/(hf)。结论：光强与电流成正比，频率不变时光强加倍则电流加倍；但遏止电压只与频率有关，与光强无关。'}
+    ],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/wIQUvBUBfm', label:'题目'}
+    ]
+  },
+  '0007': {
+    id:'0007', subject:'数学（必修）', topic:'数与代数', subtopic:'等差等比数列',
+    questionType:'选择题', title:'期初年金复利计算——定期存款终值',
+    errorType:'思路错误', difficulty:'中等',
+    date:'2026-10-19', source:'G12 Mathematics Chapter 1-2 Test Q7',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-19',
+    yourAnswer:'没有思路，未作答',
+    correctAnswer:'D',
+    options:[
+      {letter:'A', text:'$52 429', correct:false, reason:'期数或利率计算错误'},
+      {letter:'B', text:'$98 893', correct:false, reason:'用了单利或期数错误'},
+      {letter:'C', text:'$103 892', correct:false, reason:'这是期末存入（普通年金）的结果，期初存入应多一期利息'},
+      {letter:'D', text:'$104 308', correct:true, reason:'期初年金，等比数列求和，正确'}
+    ],
+    question:'Starting from January in 2021, Mr Chan deposits $5 000 into a bank at the beginning of each quarter at an interest rate of 1.6% p.a. compounded quarterly. Find his total accumulated amount at the end of the 5th year. (Give the answer correct to the nearest dollar.)',
+    wrongDesc:'完全没有思路，不知道这是等比数列求和问题。没有建立起"每笔存款存期不同，终值构成等比数列"的模型。可能混淆了期初存入和期末存入的区别，也可能不知道年利率要除以复利期数得到季度利率。',
+    correctDesc:'这是期初年金（annuity due）问题。每季度初存$5000，季度利率=1.6%÷4=0.4%，5年=20个季度。第1笔存20个季度，第2笔存19个季度……第20笔存1个季度。各笔终值构成首项为5000×1.004、公比为1.004、共20项的等比数列。用等比数列求和公式S=a(r^n-1)/(r-1)计算，得到约$104,308，选D。',
+    analysis:'<b>第1步：确定关键参数</b><br>• 每季度存款 PMT = $5000<br>• 年利率 = 1.6% p.a.，按季度复利 → 季度利率 r = 1.6% ÷ 4 = 0.4% = 0.004<br>• 5年 = 5 × 4 = 20个季度<br>• 存款在每季度初（beginning of each quarter），属于期初年金<br><br><b>第2步：分析每笔存款的存期</b><br>第1笔（2021年1月初存入）到第5年末（第20季度末），存了20个季度<br>第2笔（2021年4月初存入）到第5年末，存了19个季度<br>...<br>第20笔（2025年10月初存入）到第5年末，存了1个季度<br><br><b>第3步：写出每笔存款的终值</b><br>第1笔终值 = 5000 × (1.004)^20<br>第2笔终值 = 5000 × (1.004)^19<br>...<br>第20笔终值 = 5000 × (1.004)^1<br><br><b>第4步：等比数列求和</b><br>总金额 S = 5000 × [(1.004)^1 + (1.004)^2 + ... + (1.004)^20]<br>这是等比数列：首项 a = 5000 × 1.004，公比 r = 1.004，项数 n = 20<br><br>S = a × (r^n - 1) / (r - 1)<br>= 5000 × 1.004 × (1.004^20 - 1) / (1.004 - 1)<br>= 5000 × 1.004 × (1.004^20 - 1) / 0.004<br><br><b>第5步：计算</b><br>1.004^20 ≈ 1.08311<br>S = 5000 × 1.004 × (1.08311 - 1) / 0.004<br>= 5000 × 1.004 × 0.08311 / 0.004<br>= 5000 × 1.004 × 20.778<br>≈ $104,307 ≈ $104,308<br><br><b>答案：D</b><br><br><b>对比：如果是期末存入（普通年金）</b><br>第1笔存19个季度，第20笔存0个季度（刚存入）<br>S = 5000 × [(1.004)^0 + (1.004)^1 + ... + (1.004)^19]<br>= 5000 × (1.004^20 - 1) / 0.004 ≈ $103,892（这是选项C）<br>期初存入比期末存入多赚一个季度的利息，所以答案是D不是C。',
+    knowledge:'1. 复利公式：终值 = 本金 × (1 + r)^n，r为每期利率，n为期数<br>2. 名义年利率与实际期利率：季度利率 = 年利率 ÷ 4<br>3. 期初年金（annuity due）：每期期初存入，第一笔多存一期<br>4. 普通年金（ordinary annuity）：每期期末存入，最后一笔刚存入无利息<br>5. 等比数列求和：S = a(r^n - 1)/(r - 1)，a为首项，r为公比<br>6. 期初年金终值 = 普通年金终值 × (1 + r)<br>7. DSE常用：1.004^20的计算可以用计算器的x^y键',
+    hint:'1. 年利率1.6%按季度复利，每个季度的利率是多少？\n2. 5年有多少个季度？\n3. 第一笔钱（2021年1月初存的）到第5年末，存了多少个季度？最后一笔呢？\n4. 每笔钱的终值写出来，看看是不是等比数列？首项和公比分别是什么？\n5. 注意是"beginning of each quarter"（期初存入），不是期末！',
+    inquiry:[],
+    discussion:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/qSFRZKKIU3', label:'题目'}
+    ]
+  },
+  '0008': {
+    id:'0008', subject:'数学（必修）', topic:'数与代数', subtopic:'等差等比数列',
+    questionType:'选择题', title:'前m项和公式判断——通项推导与数列类型识别',
+    errorType:'概念不清', difficulty:'中等',
+    date:'2026-10-19', source:'G12 Mathematics Chapter 1-2 Test Q4',
+    status:'未掌握', reviewCount:0, nextReview:'2026-10-19',
+    yourAnswer:'不确定III是否正确',
+    correctAnswer:'A',
+    options:[
+      {letter:'A', text:'I only', correct:true, reason:'I正确(a₁=37)，II错误(和恒≥1)，III错误(等差非等比)'},
+      {letter:'B', text:'II only', correct:false, reason:'II错误，S(m)=(m-7)²+1恒为正'},
+      {letter:'C', text:'I and III only', correct:false, reason:'III错误，从第2项起是等差数列不是等比数列'},
+      {letter:'D', text:'II and III only', correct:false, reason:'II和III都错误'}
+    ],
+    question:'If the sum of the first m terms of a sequence is m² - 14m + 50, which of the following is/are true?\nI. The 1st term of the sequence is 37.\nII. There exists a positive integer m₀ such that the sum is negative.\nIII. The sequence is a geometric sequence.',
+    wrongDesc:'不确定III是否正确。核心问题：①不知道如何从前m项和公式推导通项；②不会判断数列是等差还是等比；③对二次函数型的和公式缺乏直觉。',
+    correctDesc:'I: a₁=S(1)=1-14+50=37，正确。II: S(m)=(m-7)²+1≥1>0，恒为正，错误。III: 通项aₘ=S(m)-S(m-1)=2m-15(m≥2)，从第2项起是等差数列(公差2)，不是等比数列，错误。只有I正确，选A。',
+    analysis:'<b>I. 第1项</b><br>a₁ = S(1) = 1² - 14(1) + 50 = 37 ✓<br><br><b>II. 和是否可能为负</b><br>S(m) = m² - 14m + 50 = (m-7)² - 49 + 50 = (m-7)² + 1<br>因为 (m-7)² ≥ 0，所以 S(m) ≥ 1 > 0<br>最小值在 m=7 时取得：S(7) = 1<br>所以和永远为正，II ✗<br><br><b>III. 是否等比数列</b><br>通项公式：aₘ = S(m) - S(m-1)（m ≥ 2）<br>aₘ = [m² - 14m + 50] - [(m-1)² - 14(m-1) + 50]<br>= m² - 14m + 50 - (m² - 2m + 1 - 14m + 14 + 50)<br>= 2m - 15<br><br>所以数列：a₁=37, a₂=-11, a₃=-9, a₄=-7, a₅=-5, ...<br>从第2项起，aₘ=2m-15，公差=2，是<b>等差数列</b>，不是等比数列。<br><br>验证等比：a₂/a₁ = -11/37 ≈ -0.30，a₃/a₂ = -9/(-11) ≈ 0.82，比值不相等 → 不是等比。III ✗<br><br><b>结论：只有I正确 → A</b>',
+    knowledge:'1. 前m项和S(m)与通项aₘ的关系：a₁=S(1)，aₘ=S(m)-S(m-1)（m≥2）\n2. 二次函数型和公式 S(m)=am²+bm+c → 从第2项起是等差数列，公差=2a\n3. 等差数列判断：aₘ - aₘ₋₁ = 常数\n4. 等比数列判断：aₘ/aₘ₋₁ = 常数（且不为0）\n5. 配方法求二次函数最值：m²-14m+50 = (m-7)²+1\n6. 注意：第1项可能不满足从第2项起的通项规律，需要单独验证',
+    hint:'1. 第1项就是前1项的和，S(1)等于多少？\n2. S(m)=m²-14m+50，配方后是什么形式？最小值是多少？\n3. 通项aₘ和前m项和S(m)的关系是什么？\n4. 算出a₂、a₃、a₄，看看它们之间是差相等还是比相等？\n5. 第1项37是否也满足从第2项起的通项公式？',
+    inquiry:[],
+    discussion:[],
+    images:[
+      {url:'https://aka.doubaocdn.com/s/ZqZ8ly6U1V', label:'题目'}
+    ]
+  }
+};
+
+// ===== 数据持久化 =====
+const STORAGE_KEY = 'dse_error_notebook_v5';
+const APP_VERSION = '1.3.3';
+let errors = {};
+let currentReviewId = null;
+let currentDetailId = null;
+let reviewSessionTotal = 0;
+let reviewSessionDone = 0;
+
+function loadData(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const savedVersion = localStorage.getItem('dse_app_version');
+    const deletedIds = JSON.parse(localStorage.getItem('dse_deleted_ids')||'[]');
+    // 以defaultErrors为基准，避免已删除的旧题残留
+    errors = JSON.parse(JSON.stringify(defaultErrors));
+    // 移除已删除的题
+    deletedIds.forEach(id=>{ delete errors[id]; });
+    if(saved){
+      const savedData = JSON.parse(saved);
+      // 只合并defaultErrors中存在且未删除的题的复习进度
+      let merged = false;
+      for(const id in defaultErrors){
+        if(savedData[id] && !deletedIds.includes(id)){
+          // 保留用户的复习进度
+          errors[id].status = savedData[id].status || errors[id].status;
+          errors[id].reviewCount = savedData[id].reviewCount || 0;
+          errors[id].nextReview = savedData[id].nextReview || errors[id].nextReview;
+          // 保留用户的AI问答记录
+          if(savedData[id].inquiry && savedData[id].inquiry.length > 0){
+            errors[id].inquiry = savedData[id].inquiry;
+          }
+          merged = true;
+        }
+      }
+      // 保留用户通过AI助手一键录入的新错题（不在defaultErrors中）
+      for(const id in savedData){
+        if(!defaultErrors[id] && !deletedIds.includes(id) && savedData[id] && savedData[id].subject){
+          errors[id] = savedData[id];
+          merged = true;
+        }
+      }
+      if(merged || savedVersion !== APP_VERSION){
+        saveData();
+        localStorage.setItem('dse_app_version', APP_VERSION);
+      }
+    }
+    else{ saveData(); localStorage.setItem('dse_app_version', APP_VERSION); }
+  }catch(e){ errors = JSON.parse(JSON.stringify(defaultErrors)); }
+}
+function saveData(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(errors)); }catch(e){} }
+function resetLocalData(){
+  if(confirm('确定要重置本地复习进度吗？所有错题将恢复为初始状态，已删除的题也会恢复。')){
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('dse_app_version');
+    localStorage.removeItem('dse_deleted_ids');
+    errors = JSON.parse(JSON.stringify(defaultErrors));
+    saveData();
+    localStorage.setItem('dse_app_version', APP_VERSION);
+    renderAll(); showToast('本地数据已重置');
+  }
+}
+function forceRefresh(){
+  // 以defaultErrors为基准重新加载，合并复习进度，跳过已删除的题
+  const oldErrors = JSON.parse(JSON.stringify(errors));
+  const deletedIds = JSON.parse(localStorage.getItem('dse_deleted_ids')||'[]');
+  errors = JSON.parse(JSON.stringify(defaultErrors));
+  deletedIds.forEach(id=>{ delete errors[id]; });
+  for(const id in defaultErrors){
+    if(oldErrors[id] && !deletedIds.includes(id)){
+      errors[id].status = oldErrors[id].status || errors[id].status;
+      errors[id].reviewCount = oldErrors[id].reviewCount || 0;
+      errors[id].nextReview = oldErrors[id].nextReview || errors[id].nextReview;
+      // 保留用户的AI问答记录
+      if(oldErrors[id].inquiry && oldErrors[id].inquiry.length > 0){
+        errors[id].inquiry = oldErrors[id].inquiry;
+      }
+    }
+  }
+  // 保留用户通过AI助手录入的新错题
+  for(const id in oldErrors){
+    if(!defaultErrors[id] && !deletedIds.includes(id) && oldErrors[id] && oldErrors[id].subject){
+      errors[id] = oldErrors[id];
+    }
+  }
+  saveData();
+  localStorage.setItem('dse_app_version', APP_VERSION);
+  renderAll();
+  showToast('已更新到最新数据，共 '+Object.keys(errors).length+' 道题');
+}
+
+// ===== 图片查看器 =====
+function openImageViewer(url, label){
+  document.getElementById('viewerImage').src=url;
+  document.getElementById('viewerLabel').textContent=label||'';
+  document.getElementById('imageViewer').style.display='flex';
+}
+function closeImageViewer(){
+  document.getElementById('imageViewer').style.display='none';
+}
+
+// ===== 日期工具 =====
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function addDaysStr(dateStr,days){ const d=new Date(dateStr); d.setDate(d.getDate()+days); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function isTodayOrBefore(dateStr){ return dateStr <= todayStr(); }
+function formatDateShort(dateStr){ const p=dateStr.split('-'); return p[1]+'-'+p[2]; }
+
+function getNextReview(status, reviewCount){
+  const today = todayStr();
+  if(status==='未掌握') return addDaysStr(today,1);
+  if(status==='复习中'){ const iv=[1,3,7,15,30]; return addDaysStr(today, iv[Math.min(reviewCount,iv.length-1)]); }
+  if(status==='已掌握'){ const lt=Math.max(0,reviewCount-4); const iv=[30,60,90,180]; return addDaysStr(today, iv[Math.min(lt,iv.length-1)]); }
+  return addDaysStr(today,1);
+}
+
+function getTagClass(et){ const m={'概念不清':'concept','计算失误':'calc','思路错误':'approach','审题错误':'misread','时间不够':'time','粗心大意':'careless'}; return m[et]||'concept'; }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+// ===== 导航 =====
+const pageTitles = {'home':'首页','upload':'如何录入','review':'今日复习','aiassistant':'AI助手','analytics':'数据分析','subject-chinese':'中国语文','subject-english':'英国语文','subject-math':'数学（必修）','subject-m2':'数学 M2','subject-physics':'物理','subject-chemistry':'化学','error-detail':'错题详情','settings':'设置'};
+
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const target=document.getElementById('page-'+page);
+  if(target){ target.classList.add('active'); document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active'); document.getElementById('topbarTitle').textContent=pageTitles[page]||page; window.scrollTo(0,0); }
+  document.getElementById('searchDropdown').classList.remove('show');
+  if(page.startsWith('subject-')){
+    const sm={'subject-chinese':'中国语文','subject-english':'英国语文','subject-math':'数学（必修）','subject-m2':'数学 M2','subject-physics':'物理','subject-chemistry':'化学'};
+    renderSubjectPage(sm[page]);
+  }
+  if(page==='review') renderReviewList();
+  if(page==='home') renderHome();
+  if(page==='analytics') renderAnalytics();
+  if(page==='aiassistant') initAIAssistant();
+  if(page==='upload' && document.getElementById('wizardSteps')) initWizard();
+}
+
+// ===== 首页 =====
+function renderHome(){
+  const all=Object.values(errors);
+  const due=all.filter(e=>isTodayOrBefore(e.nextReview)&&e.status!=='已掌握');
+  const mastered=all.filter(e=>e.status==='已掌握');
+  document.getElementById('homeReviewCount').textContent=due.length;
+  document.getElementById('homeReviewSub').textContent=due.length>0?due.map(e=>e.subject).join('、'):'今天没有待复习';
+  document.getElementById('homeTotal').textContent=all.length;
+  document.getElementById('homeTotalSub').textContent='已掌握 '+mastered.length+' · 未掌握 '+(all.length-mastered.length);
+  document.getElementById('homeLongTerm').textContent=mastered.length;
+  document.getElementById('reviewBadge').textContent=due.length;
+  const recent=all.sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  document.getElementById('recentList').innerHTML=recent.length===0?'<div class="empty-state"><p>还没有录入错题</p></div>':
+    recent.map(e=>`<div class="list-item" onclick="openErrorDetail('${e.id}')"><span class="item-id">#${e.id}</span><div class="item-info"><div class="item-title">${e.subject} · ${e.topic} — ${e.title}</div><div class="item-meta"><span class="tag tag-${getTagClass(e.errorType)}">${e.errorType}</span><span class="tag tag-${e.questionType==='选择题'?'mc':'lq'}">${e.questionType}</span> ${e.date} 录入</div></div><div class="item-action"><span class="difficulty">${e.difficulty}</span></div></div>`).join('');
+}
+
+// ===== 复习列表 =====
+function renderReviewList(){
+  const all=Object.values(errors);
+  const due=all.filter(e=>isTodayOrBefore(e.nextReview)&&e.status!=='已掌握');
+  document.getElementById('reviewSubtitle').textContent=due.length+' 道题待复习';
+  document.getElementById('reviewBadge').textContent=due.length;
+  if(reviewSessionTotal===0 && due.length>0) reviewSessionTotal=due.length;
+  const total=reviewSessionTotal||due.length;
+  document.getElementById('reviewProgress').style.width=total>0?(reviewSessionDone/total*100)+'%':'100%';
+  const list=document.getElementById('reviewList');
+  const empty=document.getElementById('reviewEmpty');
+  if(due.length===0){ list.innerHTML=''; empty.style.display='block'; reviewSessionTotal=0; reviewSessionDone=0; return; }
+  empty.style.display='none';
+  list.innerHTML=due.map(e=>`<div class="review-card" id="rc-${e.id}"><div class="rc-left"><div class="rc-title">#${e.id} ${e.subject} · ${e.topic} — ${e.title}</div><div class="rc-meta"><span class="tag tag-${getTagClass(e.errorType)}">${e.errorType}</span><span class="tag tag-${e.questionType==='选择题'?'mc':'lq'}">${e.questionType}</span><span>难度：${e.difficulty}</span><span>已复习 ${e.reviewCount} 次</span><span>状态：${e.status}</span></div></div><button class="btn btn-primary btn-sm" onclick="startReview('${e.id}')">开始复习</button></div>`).join('');
+}
+
+let reviewSelectedAnswer=null;
+
+function startReview(id){
+  // 直接跳转到错题详情页，详情页有完整题目、照片和解析
+  currentReviewId = id;
+  openErrorDetail(id);
+}
+
+function toggleReviewOption(opt){
+  if(reviewSelectedAnswer===opt){
+    reviewSelectedAnswer=null; // 取消选择
+  } else {
+    reviewSelectedAnswer=opt; // 选择
+  }
+  ['A','B','C','D'].forEach(o=>{
+    const btn=document.getElementById('rm-opt-'+o);
+    if(btn){
+      if(reviewSelectedAnswer===o){
+        btn.classList.add('selected');
+        btn.style.background='var(--primary)';
+        btn.style.color='#fff';
+        btn.style.borderColor='var(--primary)';
+      } else {
+        btn.classList.remove('selected');
+        btn.style.background='';
+        btn.style.color='';
+        btn.style.borderColor='';
+      }
+    }
+  });
+}
+function exitReview(){ document.getElementById('reviewMode').style.display='none'; currentReviewId=null; }
+function toggleSection(name){ const c=document.getElementById(name+'-content'); const a=document.getElementById(name+'-arrow'); c.classList.toggle('open'); a.textContent=c.classList.contains('open')?'−':'+'; }
+
+function submitFeedback(result){
+  if(!currentReviewId) return;
+  const e=errors[currentReviewId];
+  if(result==='掌握'){ e.status='已掌握'; e.reviewCount+=1; e.nextReview=getNextReview('已掌握',e.reviewCount); }
+  else if(result==='模糊'){ e.status='复习中'; e.reviewCount+=1; e.nextReview=getNextReview('复习中',e.reviewCount); }
+  else{ e.status='未掌握'; e.reviewCount=0; e.nextReview=getNextReview('未掌握',0); }
+  saveData();
+  const reviewedId=currentReviewId;
+  exitReview();
+  reviewSessionDone+=1;
+  renderReviewList(); renderHome();
+  let msg='';
+  if(result==='掌握') msg='已标记掌握，进入长期记忆：'+e.nextReview+' 复习';
+  else if(result==='模糊') msg='已标记模糊，复习次数+1，'+e.nextReview+' 复习';
+  else msg='已标记未掌握，重置间隔，明天复习';
+  showToast(msg);
+}
+
+function showReviewFeedback(){
+  document.getElementById('reviewFeedbackSection').style.display='block';
+  document.getElementById('reviewFeedbackSection').scrollIntoView({behavior:'smooth'});
+}
+
+function submitFeedbackFromDetail(result){
+  if(!currentDetailId) return;
+  const e=errors[currentDetailId];
+  if(result==='掌握'){ e.status='已掌握'; e.reviewCount+=1; e.nextReview=getNextReview('已掌握',e.reviewCount); }
+  else if(result==='模糊'){ e.status='复习中'; e.reviewCount+=1; e.nextReview=getNextReview('复习中',e.reviewCount); }
+  else{ e.status='未掌握'; e.reviewCount=0; e.nextReview=getNextReview('未掌握',0); }
+  saveData();
+  document.getElementById('reviewFeedbackSection').style.display='none';
+  renderReviewList(); renderHome();
+  // 更新详情页显示的状态
+  const edStatusEl = document.getElementById('edStatus');
+  if(edStatusEl) edStatusEl.textContent='状态：'+e.status;
+  document.getElementById('edReviewCount').textContent='复习次数：'+e.reviewCount;
+  document.getElementById('edNextReview').textContent='下次复习：'+e.nextReview;
+  let msg='';
+  if(result==='掌握') msg='已标记掌握，进入长期记忆：'+e.nextReview+' 复习';
+  else if(result==='模糊') msg='已标记模糊，复习次数+1，'+e.nextReview+' 复习';
+  else msg='已标记未掌握，重置间隔，明天复习';
+  showToast(msg);
+}
+
+// ===== AI问答功能 =====
+function generateAIQuestion(){
+  const input = document.getElementById('aiQuestionInput');
+  const question = input.value.trim();
+  if(!question){ showToast('请先输入问题'); return; }
+  if(!currentDetailId) return;
+  const e = errors[currentDetailId];
+  const preview = document.getElementById('aiQuestionPreview');
+  const text = '【DSE错题本提问】\n题目编号：#'+e.id+'\n学科：'+e.subject+'\n课题：'+e.topic+' → '+e.subtopic+'\n题目：'+e.title+'\n\n我的问题：'+question+'\n\n请针对这道题的这个问题给出详细解答。';
+  preview.textContent = text;
+  preview.style.display = 'block';
+  showToast('提问已生成，点击「复制问题」后到豆包对话粘贴');
+}
+
+function copyAIQuestion(){
+  const preview = document.getElementById('aiQuestionPreview');
+  if(preview.style.display === 'none' || !preview.textContent){ showToast('请先生成提问'); return; }
+  const text = preview.textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      showToast('已复制到剪贴板，到豆包对话粘贴发送');
+    }).catch(()=>{
+      // 降级方案
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showToast('已复制到剪贴板');
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('已复制到剪贴板');
+  }
+}
+
+function showAddAnswerForm(){
+  document.getElementById('addAnswerForm').style.display = 'block';
+  document.getElementById('aiAnswerInput').focus();
+}
+
+function hideAddAnswerForm(){
+  document.getElementById('addAnswerForm').style.display = 'none';
+  document.getElementById('aiAnswerInput').value = '';
+}
+
+function saveAIAnswer(){
+  const question = document.getElementById('aiQuestionInput').value.trim();
+  const answer = document.getElementById('aiAnswerInput').value.trim();
+  if(!question || !answer){ showToast('问题和回答都不能为空'); return; }
+  if(!currentDetailId) return;
+  const e = errors[currentDetailId];
+  if(!e.inquiry) e.inquiry = [];
+  e.inquiry.push({ai: answer, user: question});
+  saveData();
+  // 刷新显示
+  renderInquiry(e);
+  // 清空输入
+  document.getElementById('aiQuestionInput').value = '';
+  document.getElementById('aiAnswerInput').value = '';
+  document.getElementById('addAnswerForm').style.display = 'none';
+  document.getElementById('aiQuestionPreview').style.display = 'none';
+  showToast('问答已保存');
+}
+
+function renderInquiry(e){
+  const container = document.getElementById('edInquiry');
+  if(!container) return;
+  if(e.inquiry && e.inquiry.length > 0){
+    container.innerHTML = e.inquiry.map(m=>{
+      const q = m.user ? '<div class="chat-msg user"><div class="chat-avatar">你</div><div class="chat-bubble">'+m.user+'</div></div>' : '';
+      let a = '';
+      if(m.ai === null){
+        // AI正在思考中：显示加载动画
+        a = '<div class="chat-msg ai"><div class="chat-avatar">AI</div><div class="chat-bubble"><div class="ai-loading" style="padding:4px 0;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>正在思考...</span></div></div></div>';
+      } else if(m.ai){
+        a = '<div class="chat-msg ai"><div class="chat-avatar">AI</div><div class="chat-bubble"><span class="reply-text">'+m.ai+'</span></div></div>';
+      }
+      return q + a;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+  } else {
+    container.innerHTML = '<p style="color:var(--text-tertiary);font-size:12px;">暂无问答记录。在下方输入问题，AI会结合这道错题的题目、错因和解析实时回答。</p>';
+  }
+}
+
+// ===== AI助手：系统提示词与全局状态 =====
+// AI助手主对话的系统提示词
+const AI_ASSISTANT_SYSTEM = '你是DSE（香港中学文凭考试）错题本AI助手，服务于一个学生错题管理网页应用。\n' +
+'你的任务：\n' +
+'1. 当用户发送错题照片或题目文字时：识别题目内容、判断学科和课题（学科只能是：中国语文、英国语文、数学（必修）、数学 M2、物理、化学）、分析错因、生成详细解析。\n' +
+'2. 每次解析回复要包含：题目内容复述、学科/课题/子课题、正确答案、解题思路、核心知识点。\n' +
+'3. 当用户说"录入错题"、"确认录入"或表示要把这道题加入错题本时，在回复最后用 ```json ... ``` 包裹输出一个错题JSON对象，字段包括：\n' +
+'subject, topic, subtopic, questionType("选择题"或"长答题"), title, errorType("概念不清"|"计算失误"|"思路错误"|"审题错误"|"时间不够"|"粗心大意"), difficulty("简单"|"中等"|"困难"|"中等偏难"), question, yourAnswer, correctAnswer, wrongDesc, correctDesc, analysis, knowledge, hint；选择题可加options数组[{letter,text,correct,reason}]，长答题可加steps数组[{text,mark,lost}]和lostPoints数组[{step,reason}]。\n' +
+'不要包含id、date、status、reviewCount、nextReview等字段（前端自动生成）。JSON必须合法，不要加注释。\n' +
+'4. 用简体中文回答；DSE题目本身是英文时保留英文原文。\n' +
+'5. 解析要详细、符合DSE评分标准（marking scheme），关键术语用中英文标注。';
+
+// 错题详情页AI问答的系统提示词
+function buildDetailSystemPrompt(e){
+  return '你是DSE错题本AI答疑助手。下面是学生正在复习的一道错题的完整信息，请基于这些内容用简体中文准确、简明地回答学生的提问，必要时引用DSE评分标准（marking scheme）。\n\n' +
+  '【错题编号】#'+e.id+'\n' +
+  '【学科】'+e.subject+'\n【课题】'+e.topic+' → '+e.subtopic+'\n【题型】'+e.questionType+'\n【标题】'+e.title+'\n' +
+  '【错误类型】'+e.errorType+'\n【难度】'+(e.difficulty||'—')+'\n' +
+  '【题目】\n'+(e.question||e.title||'')+'\n' +
+  '【学生的错误答案】'+(e.yourAnswer||'—')+'\n' +
+  '【正确答案】'+(e.correctAnswer||'—')+'\n' +
+  '【错因描述】'+(e.wrongDesc||'—')+'\n' +
+  '【正确解法说明】'+(e.correctDesc||'—')+'\n' +
+  '【详细解析】\n'+(e.analysis||'—')+'\n' +
+  '【核心知识点】\n'+(e.knowledge||'—');
+}
+
+// AI助手对话历史（保存在前端变量中，每次请求发送完整历史）
+let aiChatHistory = [];
+let aiPendingImage = null;      // 待发送图片的base64 data URL
+let aiBusy = false;             // 是否正在等待AI回复
+let aiLastErrorData = null;     // AI最新回复中解析出的错题JSON
+let aiLastImportDone = false;   // 最近一条错题数据是否已录入
+
+// 详情页对话锁
+let detailChatBusy = false;
+
+// ===== 通用：调用后端 /api/chat =====
+async function callChatAPI(messages){
+  const controller = new AbortController();
+  const timer = setTimeout(()=>controller.abort(), 60000);
+  try{
+    const resp = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages: messages}),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if(!resp.ok){
+      let detail = '';
+      try{ const errData = await resp.json(); detail = errData.error || errData.detail || ''; }catch(e){}
+      throw new Error('服务器返回 '+resp.status+(detail?'：'+detail:''));
+    }
+    const data = await resp.json();
+    return data.reply || '（AI未返回内容）';
+  }catch(err){
+    clearTimeout(timer);
+    if(err.name === 'AbortError') throw new Error('请求超时，请检查网络后重试');
+    throw err;
+  }
+}
+
+// 简单HTML转义
+function escapeHtml(str){
+  return String(str==null?'':str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== AI助手：初始化 =====
+function initAIAssistant(){
+  renderAIChatMessages();
+}
+
+// ===== AI助手：选择图片（拍照/相册）=====
+function handleAIFilePick(files, inputEl){
+  if(!files || files.length===0) return;
+  const f = files[0];
+  const reader = new FileReader();
+  reader.onload = function(e){
+    aiPendingImage = e.target.result;
+    renderAIPreview();
+  };
+  reader.readAsDataURL(f);
+  // 允许重复选择同一文件
+  if(inputEl) inputEl.value = '';
+}
+
+// 渲染待发送图片缩略图
+function renderAIPreview(){
+  const row = document.getElementById('aiPreviewRow');
+  if(!aiPendingImage){ row.classList.remove('show'); row.innerHTML=''; return; }
+  row.innerHTML = '<div class="ai-img-thumb"><img src="'+aiPendingImage+'"><button class="thumb-remove" onclick="clearAIPreviewImage()">×</button></div>';
+  row.classList.add('show');
+}
+function clearAIPreviewImage(){
+  aiPendingImage = null;
+  renderAIPreview();
+}
+
+// ===== AI助手：发送消息 =====
+function sendAIChat(){
+  if(aiBusy) return;
+  const input = document.getElementById('aiChatInput');
+  const text = input.value.trim();
+  if(!text && !aiPendingImage){ showToast('请输入文字或拍照上传'); return; }
+
+  // 构建用户消息：有图片时content为数组
+  let userContent;
+  if(aiPendingImage){
+    userContent = [];
+    if(text) userContent.push({type:'text', text: text});
+    userContent.push({type:'image_url', image_url:{url: aiPendingImage}});
+  } else {
+    userContent = text;
+  }
+
+  aiChatHistory.push({role:'user', content: userContent});
+  aiPendingImage = null;
+  renderAIPreview();
+  input.value = '';
+
+  doAIAssistantRequest();
+}
+
+// 发起请求并渲染
+function doAIAssistantRequest(){
+  aiBusy = true;
+  document.getElementById('aiSendBtn').disabled = true;
+  aiLastErrorData = null;
+  aiLastImportDone = false;
+  renderAIChatMessages(true); // 末尾显示loading
+
+  const messages = [{role:'system', content: AI_ASSISTANT_SYSTEM}].concat(aiChatHistory);
+  callChatAPI(messages).then(reply=>{
+    aiChatHistory.push({role:'assistant', content: reply});
+    // 检测回复中的错题JSON
+    aiLastErrorData = extractErrorJSON(reply);
+    renderAIChatMessages(false);
+  }).catch(err=>{
+    aiChatHistory.push({role:'assistant', content:'⚠️ 请求失败：'+err.message+'\n请检查网络或稍后重试。'});
+    renderAIChatMessages(false);
+  }).finally(()=>{
+    aiBusy = false;
+    document.getElementById('aiSendBtn').disabled = false;
+  });
+}
+
+// 从AI回复中提取 ```json ... ``` 包裹的错题数据
+function extractErrorJSON(text){
+  if(!text) return null;
+  const match = text.match(/```json\s*([\s\S]*?)```/i);
+  if(!match) return null;
+  try{
+    return JSON.parse(match[1].trim());
+  }catch(e){
+    // 尝试清理常见问题后再解析
+    try{
+      let raw = match[1].trim().replace(/,\s*([}\]])/g, '$1');
+      return JSON.parse(raw);
+    }catch(e2){
+      return null;
+    }
+  }
+}
+
+// 渲染AI助手聊天区
+function renderAIChatMessages(showLoading){
+  const box = document.getElementById('aiChatMessages');
+  const welcome = document.getElementById('aiWelcome');
+  if(!box) return;
+
+  if(aiChatHistory.length === 0){
+    box.innerHTML = welcome ? welcome.outerHTML : '';
+    return;
+  }
+  // 有历史消息，去掉欢迎语
+  let html = '';
+  aiChatHistory.forEach((m, idx)=>{
+    if(m.role === 'user'){
+      // 用户消息：content可能是字符串或数组
+      let inner = '';
+      if(typeof m.content === 'string'){
+        inner = '<span class="reply-text">'+escapeHtml(m.content)+'</span>';
+      } else {
+        m.content.forEach(part=>{
+          if(part.type==='text') inner += '<span class="reply-text">'+escapeHtml(part.text)+'</span>';
+          else if(part.type==='image_url') inner += '<img class="thumb" src="'+part.image_url.url+'">';
+        });
+      }
+      html += '<div class="chat-msg user"><div class="chat-avatar">你</div><div class="chat-bubble">'+inner+'</div></div>';
+    } else {
+      // AI消息：去掉json代码块后展示，并附加操作按钮
+      let text = typeof m.content === 'string' ? m.content : '';
+      let data = extractErrorJSON(text);
+      let displayText = text.replace(/```json[\s\S]*?```/i, '').trim();
+      let actionHtml = '';
+      if(data && idx === aiChatHistory.length-1 && !aiBusy){
+        // 最后一条AI消息且含可录入数据
+        const subject = data.subject||'未分类';
+        const title = data.title||data.subtopic||'错题';
+        actionHtml = '<div class="import-action">'+
+          '<button class="btn btn-success btn-sm" onclick="importErrorFromLastAI()">📥 录入错题本</button>'+
+          '<span style="font-size:11px;color:var(--text-tertiary);align-self:center;">已识别：'+escapeHtml(subject)+' · '+escapeHtml(title)+'</span>'+
+          '</div>';
+      }
+      html += '<div class="chat-msg ai"><div class="chat-avatar">AI</div><div class="chat-bubble"><span class="reply-text">'+escapeHtml(displayText).replace(/\n/g,'<br>')+'</span>'+actionHtml+'</div></div>';
+    }
+  });
+  if(showLoading){
+    html += '<div class="chat-msg ai"><div class="chat-avatar">AI</div><div class="chat-bubble"><div class="ai-loading" style="padding:4px 0;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>AI正在思考...</span></div></div></div>';
+  }
+  box.innerHTML = html;
+  box.scrollTop = box.scrollHeight;
+}
+
+// ===== 一键录入错题本 =====
+function nextErrorId(){
+  let max = 8;
+  for(const id in errors){
+    const n = parseInt(id,10);
+    if(!isNaN(n) && n > max) max = n;
+  }
+  return String(max+1).padStart(4,'0');
+}
+
+function importErrorFromLastAI(){
+  if(!aiLastErrorData || !aiLastErrorData.subject){ showToast('未识别到有效的错题数据'); return; }
+  const data = aiLastErrorData;
+  const id = nextErrorId();
+  const today = todayStr();
+  const ne = {
+    id: id,
+    subject: data.subject,
+    topic: data.topic || '未分类',
+    subtopic: data.subtopic || '—',
+    questionType: data.questionType || '长答题',
+    title: data.title || (data.subtopic || data.topic || '未命名错题'),
+    errorType: data.errorType || '概念不清',
+    difficulty: data.difficulty || '中等',
+    date: today,
+    source: data.source || 'AI助手录入',
+    status: '未掌握',
+    reviewCount: 0,
+    nextReview: addDaysStr(today, 1),
+    yourAnswer: data.yourAnswer || '—',
+    correctAnswer: data.correctAnswer || '—',
+    question: data.question || data.title || '',
+    wrongDesc: data.wrongDesc || '',
+    correctDesc: data.correctDesc || '',
+    analysis: data.analysis || '',
+    knowledge: data.knowledge || '',
+    hint: data.hint || '',
+    inquiry: [],
+    discussion: [],
+    images: []
+  };
+  if(Array.isArray(data.options)) ne.options = data.options;
+  if(Array.isArray(data.steps)) ne.steps = data.steps;
+  if(Array.isArray(data.lostPoints)) ne.lostPoints = data.lostPoints;
+
+  errors[id] = ne;
+  saveData();
+  aiLastImportDone = true;
+  aiLastErrorData = null;
+  renderAll();
+  renderAIChatMessages(false);
+  showToast('错题 #'+id+' 已录入错题本！');
+  // 追加一条系统提示消息
+  aiChatHistory.push({role:'assistant', content:'✅ 错题 #'+id+' 已成功录入！下次复习日期为 '+ne.nextReview+'。点击「查看错题」可跳转到详情页。'});
+  renderAIChatMessages(false);
+  // 提供跳转按钮
+  setTimeout(()=>openErrorDetail(id), 600);
+}
+
+// ===== 错题详情页：实时AI问答 =====
+function sendDetailChat(){
+  if(detailChatBusy || !currentDetailId) return;
+  const input = document.getElementById('edChatInput');
+  const q = input.value.trim();
+  if(!q){ showToast('请输入问题'); return; }
+  const e = errors[currentDetailId];
+  if(!e) return;
+  if(!e.inquiry) e.inquiry = [];
+
+  detailChatBusy = true;
+  input.value = '';
+  const sendBtn = document.getElementById('edChatSendBtn');
+  if(sendBtn) sendBtn.disabled = true;
+
+  // 先占位渲染用户问题+AI加载动画
+  e.inquiry.push({user: q, ai: null});
+  renderInquiry(e);
+
+  // 构建请求消息：系统上下文 + 历史问答（去掉最后一条占位的null）
+  const history = [];
+  e.inquiry.forEach((m, idx)=>{
+    if(idx === e.inquiry.length-1) return; // 最后一条是刚发的用户问题
+    if(m.user) history.push({role:'user', content: m.user});
+    if(m.ai) history.push({role:'assistant', content: m.ai});
+  });
+  history.push({role:'user', content: q});
+  const messages = [{role:'system', content: buildDetailSystemPrompt(e)}].concat(history);
+
+  callChatAPI(messages).then(reply=>{
+    e.inquiry[e.inquiry.length-1].ai = reply;
+    saveData();
+    renderInquiry(e);
+  }).catch(err=>{
+    e.inquiry.pop(); // 移除占位
+    renderInquiry(e);
+    showToast('AI请求失败：'+err.message);
+  }).finally(()=>{
+    detailChatBusy = false;
+    if(sendBtn) sendBtn.disabled = false;
+  });
+}
+
+// ===== 学科页（按课题→子课题组织） =====
+function renderSubjectPage(subject){
+  const container=document.querySelector('.subject-page-content[data-subject="'+subject+'"]');
+  if(!container) return;
+  const all=Object.values(errors).filter(e=>e.subject===subject);
+  const mastered=all.filter(e=>e.status==='已掌握').length;
+  const due=all.filter(e=>isTodayOrBefore(e.nextReview)&&e.status!=='已掌握').length;
+  const topics=curriculum[subject]||{};
+  let topicHtml=Object.entries(topics).map(([topic,subtopics])=>{
+    const te=all.filter(e=>e.topic===topic);
+    const hasErrors=te.length>0;
+    // 构建所有子课题（包括无错题的）
+    const subHtml=subtopics.map(sub=>{
+      const items=te.filter(e=>e.subtopic===sub);
+      const count=items.length;
+      const isEmpty=count===0;
+      const itemsHtml=items.map(e=>`<div class="list-item" onclick="openErrorDetail('${e.id}')"><span class="item-id">#${e.id}</span><div class="item-info"><div class="item-title">${e.title}</div><div class="item-meta"><span class="tag tag-${getTagClass(e.errorType)}">${e.errorType}</span><span class="tag tag-${e.questionType==='选择题'?'mc':'lq'}">${e.questionType}</span> · ${e.date} · ${e.status==='已掌握'?'长期记忆 · '+e.nextReview:'下次复习 '+e.nextReview}</div></div><div class="item-action"><span class="difficulty">${e.difficulty}</span></div></div>`).join('');
+      return `<div class="subtopic-group">
+        <div class="subtopic-header" onclick="${isEmpty?'':'toggleSubtopic(this)'}" style="${isEmpty?'color:var(--text-tertiary);cursor:default;':''}">
+          <span>${sub}</span>
+          <span class="subtopic-count" style="${isEmpty?'background:var(--border-light);color:var(--text-tertiary);':''}">${count}道</span>
+        </div>
+        ${isEmpty?'':`<div class="subtopic-items">${itemsHtml}</div>`}
+      </div>`;
+    }).join('');
+    return `<div class="topic-group ${hasErrors?'open':''}">
+      <div class="topic-header" onclick="toggleTopicGroup(this)">
+        <span>${topic}</span>
+        <span class="topic-count">${te.length} 道</span>
+      </div>
+      <div class="topic-body">${subHtml}</div>
+    </div>`;
+  }).join('');
+  const emptyHtml=all.length===0?`<div class="empty-state"><div class="es-icon">${subject.charAt(0)}</div><p>还没有${subject}错题</p><button class="btn btn-outline btn-sm" onclick="navigate('upload')">录入第一道题</button></div>`:'';
+  container.innerHTML=`<div class="page-header"><h2>${subject}</h2><p>${all.length} 道错题 · 掌握率 ${all.length>0?Math.round(mastered/all.length*100):0}%</p></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">错题总数</div><div class="stat-value">${all.length}</div></div><div class="stat-card"><div class="stat-label">已掌握</div><div class="stat-value">${mastered}</div></div><div class="stat-card"><div class="stat-label">待复习</div><div class="stat-value">${due}</div></div></div><p style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px;">点击课题展开/折叠，灰色子课题表示暂无错题</p>${topicHtml}${emptyHtml}`;
+}
+
+function toggleTopicGroup(el){ el.parentElement.classList.toggle('open'); }
+function toggleSubtopic(el){ const items=el.nextElementSibling; if(items) items.style.display=items.style.display==='none'?'block':'none'; }
+
+// ===== 错题详情 =====
+function openErrorDetail(id){
+  try{
+    const e=errors[id]; if(!e){ showToast('错题不存在'); return; }
+    currentDetailId=id;
+    document.getElementById('edTitle').textContent='#'+e.id+' '+(e.title||'无题');
+    document.getElementById('edSubtitle').textContent=e.subject+' · '+e.topic+' · '+e.subtopic;
+    document.getElementById('edErrorTag').textContent=e.errorType||'—';
+    document.getElementById('edErrorTag').className='tag tag-'+getTagClass(e.errorType);
+    document.getElementById('edTypeTag').textContent=e.questionType||'—';
+    document.getElementById('edTypeTag').className='tag tag-'+(e.questionType==='选择题'?'mc':'lq');
+    document.getElementById('edDifficulty').textContent='难度：'+(e.difficulty||'—');
+    document.getElementById('edDate').textContent='录入：'+(e.date||'—')+' · 来源：'+(e.source||'—');
+    document.getElementById('edTopic').textContent=e.topic||'—';
+    document.getElementById('edSubtopic').textContent=e.subtopic||'—';
+    document.getElementById('edReviewCount').textContent=(e.reviewCount||0)+' 次';
+    document.getElementById('edNextReview').textContent=e.status==='已掌握'?'长期记忆 · '+e.nextReview:(e.nextReview||'—');
+    // 题目照片
+    if(e.images && e.images.length>0){
+      document.getElementById('edImagesSection').style.display='block';
+      document.getElementById('edImages').innerHTML=e.images.map((img,i)=>`<div style="cursor:pointer;" onclick="openImageViewer('${img.url.replace(/'/g,"\\'")}','${img.label||''}')"><img src="${img.url}" style="max-width:280px;max-height:200px;object-fit:cover;border-radius:8px;border:1px solid var(--border);"><div style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:4px;">${img.label||''}</div></div>`).join('');
+    } else {
+      document.getElementById('edImagesSection').style.display='none';
+    }
+    document.getElementById('edQuestion').innerHTML=(e.question||'').replace(/\n/g,'<br>');
+    document.getElementById('edWrongLabel').textContent='你的答案：'+(e.yourAnswer||'—');
+    document.getElementById('edWrongDesc').textContent=e.wrongDesc||'—';
+    document.getElementById('edCorrectLabel').textContent='正确答案：'+(e.correctAnswer||'—');
+    document.getElementById('edCorrectDesc').textContent=e.correctDesc||'—';
+    document.getElementById('edAnalysis').innerHTML=e.analysis||'—';
+    document.getElementById('edKnowledge').innerHTML=(e.knowledge||'').replace(/\n/g,'<br>');
+    // 选择题/长答题不同展示
+    if(e.questionType==='选择题' && e.options){
+      document.getElementById('edMcSection').style.display='block';
+      document.getElementById('edLqSection').style.display='none';
+      document.getElementById('edOptions').innerHTML=e.options.map(o=>`<div class="ed-option-row ${o.correct?'correct':(o.letter===e.yourAnswer?'wrong':'')}"><span class="opt-letter">${o.letter}.</span><span>${o.text}<br><span style="font-size:11px;color:var(--text-secondary);">${o.reason||''}</span></span></div>`).join('');
+    } else if(e.questionType==='长答题' && e.steps){
+      document.getElementById('edMcSection').style.display='none';
+      document.getElementById('edLqSection').style.display='block';
+      document.getElementById('edSteps').innerHTML=e.steps.map((s,i)=>`<div class="ed-step-row ${s.lost?'lost':''}"><span class="step-mark">步骤${i+1}${s.mark?' · '+s.mark+'分':''}</span>${s.text}</div>`).join('');
+      document.getElementById('edLostPoints').innerHTML=e.lostPoints?e.lostPoints.map(l=>`<div class="ed-wrong" style="margin-bottom:6px;"><div class="ew-label">${l.step}</div><p style="font-size:12px;margin:0;">${l.reason}</p></div>`).join(''):'<p style="color:var(--text-tertiary);font-size:12px;">无失分点</p>';
+    } else {
+      document.getElementById('edMcSection').style.display='none';
+      document.getElementById('edLqSection').style.display='none';
+    }
+    // AI问答记录
+    renderInquiry(e);
+    // 清空问答输入框
+    const edChatInput = document.getElementById('edChatInput');
+    if(edChatInput) edChatInput.value = '';
+    // 兼容旧元素（已移除，避免报错）
+    const oldQ = document.getElementById('aiQuestionInput');
+    if(oldQ) oldQ.value = '';
+    document.getElementById('edBackBtn').onclick=function(){ const sm={'中国语文':'subject-chinese','英国语文':'subject-english','数学（必修）':'subject-math','数学 M2':'subject-m2','物理':'subject-physics','化学':'subject-chemistry'}; navigate(sm[e.subject]||'home'); };
+    // 如果是从复习页跳转过来的，显示复习反馈区域
+    const fbSection = document.getElementById('reviewFeedbackSection');
+    if(fbSection){
+      if(currentReviewId === id){
+        fbSection.style.display='block';
+      } else {
+        fbSection.style.display='none';
+      }
+    }
+    navigate('error-detail');
+  }catch(err){
+    console.error('openErrorDetail error:', err);
+    showToast('打开详情页失败：'+err.message);
+  }
+}
+
+// ===== 删除错题 =====
+function confirmDeleteError(){
+  if(!currentDetailId) return;
+  const e=errors[currentDetailId];
+  document.getElementById('deleteModalText').textContent='确定要删除 #'+e.id+'「'+e.title+'」吗？此操作不可撤销。';
+  document.getElementById('deleteModal').style.display='flex';
+}
+function closeDeleteModal(){ document.getElementById('deleteModal').style.display='none'; }
+function executeDeleteError(){
+  if(!currentDetailId) return;
+  const id=currentDetailId;
+  const subject=errors[id].subject;
+  // 记录已删除ID，避免刷新后恢复
+  try{
+    const deletedIds = JSON.parse(localStorage.getItem('dse_deleted_ids')||'[]');
+    if(!deletedIds.includes(id)){ deletedIds.push(id); localStorage.setItem('dse_deleted_ids', JSON.stringify(deletedIds)); }
+  }catch(e){}
+  delete errors[id];
+  saveData();
+  closeDeleteModal();
+  showToast('错题 #'+id+' 已删除');
+  // 返回对应学科页
+  const sm={'中国语文':'subject-chinese','英国语文':'subject-english','数学（必修）':'subject-math','数学 M2':'subject-m2','物理':'subject-physics','化学':'subject-chemistry'};
+  navigate(sm[subject]||'home');
+}
+
+// ===== 数据分析 =====
+function renderAnalytics(){
+  const all=Object.values(errors);
+  const sc={}; all.forEach(e=>{sc[e.subject]=(sc[e.subject]||0)+1;});
+  const ms=Math.max(...Object.values(sc),1);
+  document.getElementById('chartSubject').innerHTML=subjectList.map(s=>{const c=sc[s]||0;return `<div class="bar-row"><span class="bar-label">${s}</span><div class="bar-track"><div class="bar-fill" style="width:${c/ms*100}%">${c>0?c:''}</div></div></div>`;}).join('');
+  const ec={}; all.forEach(e=>{ec[e.errorType]=(ec[e.errorType]||0)+1;});
+  const me=Math.max(...Object.values(ec),1);
+  document.getElementById('chartError').innerHTML=Object.entries(ec).map(([k,v])=>`<div class="bar-row"><span class="bar-label">${k}</span><div class="bar-track"><div class="bar-fill" style="width:${v/me*100}%;background:#3B82F6">${v}</div></div></div>`).join('')||'<p style="color:var(--text-tertiary);font-size:13px;">暂无数据</p>';
+  const mastered=all.filter(e=>e.status==='已掌握').length;
+  const reviewing=all.filter(e=>e.status==='复习中').length;
+  const nm=all.filter(e=>e.status==='未掌握').length;
+  const t=all.length||1;
+  document.getElementById('chartMastery').innerHTML=`<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>已掌握</span><span style="color:var(--text-tertiary);">${mastered} 道 · ${Math.round(mastered/t*100)}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${mastered/t*100}%;background:#10B981;"></div></div></div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>复习中</span><span style="color:var(--text-tertiary);">${reviewing} 道 · ${Math.round(reviewing/t*100)}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${reviewing/t*100}%;background:#F59E0B;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>未掌握</span><span style="color:var(--text-tertiary);">${nm} 道 · ${Math.round(nm/t*100)}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${nm/t*100}%;background:#EF4444;"></div></div></div>`;
+}
+
+// ===== 搜索 =====
+function handleSearch(q){
+  const dd=document.getElementById('searchDropdown');
+  if(!q.trim()){dd.classList.remove('show');return;}
+  const results=Object.values(errors).filter(e=>e.id.includes(q)||e.title.includes(q)||e.topic.includes(q)||e.subtopic.includes(q)||e.subject.includes(q)||e.errorType.includes(q));
+  dd.innerHTML=results.length===0?'<div class="search-item"><div class="si-title">未找到相关错题</div></div>':results.map(e=>`<div class="search-item" onclick="openErrorDetail('${e.id}')"><div class="si-title">#${e.id} ${e.title}</div><div class="si-meta">${e.subject} · ${e.topic} · ${e.errorType}</div></div>`).join('');
+  dd.classList.add('show');
+}
+document.addEventListener('click',function(e){if(!e.target.closest('.topbar-search'))document.getElementById('searchDropdown').classList.remove('show');});
+
+function renderAll(){ renderHome(); renderReviewList(); renderAnalytics(); }
+
+// ===== 录入向导 =====
+let wizardState = {
+  step: 1,
+  photos: [],
+  subject: '',
+  topic: '',
+  subtopic: '',
+  questionType: '',
+  yourAnswer: '',
+  inquiryAnswers: [],
+  errorType: '',
+  errorSummary: '',
+  errorTypeConfirmed: false,
+  analysis: '',
+  discussion: [],
+  questionText: '',
+  correctAnswer: '',
+  title: '',
+  difficulty: '中等',
+  source: ''
+};
+
+const wizardStepNames = ['上传照片','AI识别','询问思路','总结错因','解析讨论','确认入库'];
+
+function initWizard(){
+  wizardState = {
+    step:1, photos:[], subject:'化学', topic:'反应速率', subtopic:'', questionType:'',
+    yourAnswer:'', inquiryAnswers:[], errorType:'', errorSummary:'', errorTypeConfirmed:false,
+    analysis:'', discussion:[], questionText:'', correctAnswer:'', title:'', difficulty:'中等', source:''
+  };
+  renderWizard();
+}
+
+function renderWizard(){
+  // 步骤指示器
+  const stepsHtml = wizardStepNames.map((name,i)=>{
+    const idx=i+1;
+    let cls='';
+    if(idx<wizardState.step) cls='done';
+    else if(idx===wizardState.step) cls='active';
+    const line = idx<wizardState.step ? '<div class="wizard-line done"></div>' : (idx<wizardStepNames.length?'<div class="wizard-line"></div>':'');
+    return `<div class="wizard-step ${cls}"><span class="ws-num">${idx<wizardState.step?'OK':idx}</span>${name}</div>${line}`;
+  }).join('');
+  document.getElementById('wizardSteps').innerHTML=stepsHtml;
+
+  // 内容
+  const content=document.getElementById('wizardContent');
+  if(wizardState.step===1) content.innerHTML=renderStep1();
+  else if(wizardState.step===2) content.innerHTML=renderStep2();
+  else if(wizardState.step===3) content.innerHTML=renderStep3();
+  else if(wizardState.step===4) content.innerHTML=renderStep4();
+  else if(wizardState.step===5) content.innerHTML=renderStep5();
+  else if(wizardState.step===6) content.innerHTML=renderStep6();
+
+  // 操作按钮
+  const actions=document.getElementById('wizardActions');
+  if(wizardState.step===1){
+    actions.innerHTML=`<div></div><button class="btn btn-primary" onclick="wizardNext()">下一步：AI识别</button>`;
+  } else if(wizardState.step===6){
+    actions.innerHTML=`<button class="btn btn-ghost" onclick="wizardPrev()">上一步</button><button class="btn btn-primary" onclick="confirmAddError()">确认加入错题本</button>`;
+  } else {
+    actions.innerHTML=`<button class="btn btn-ghost" onclick="wizardPrev()">上一步</button><button class="btn btn-primary" onclick="wizardNext()" id="wizardNextBtn">下一步</button>`;
+  }
+}
+
+function renderStep1(){
+  const topics=curriculum[wizardState.subject]||{};
+  const topicOptions=Object.keys(topics).map(t=>`<option ${t===wizardState.topic?'selected':''}>${t}</option>`).join('');
+  const subjectOptions=subjectList.map(s=>`<option ${s===wizardState.subject?'selected':''}>${s}</option>`).join('');
+  const photosHtml=wizardState.photos.map((p,i)=>`<img class="preview-img" src="${p}">`).join('');
+  return `
+    <div class="upload-area" id="wizardUploadArea" onclick="document.getElementById('wizardFileInput').click()">
+      <div class="upload-icon">+</div><div class="upload-text">点击或拖拽上传错题照片</div><div class="upload-hint">支持 JPG / PNG，可多选</div>
+      <input type="file" id="wizardFileInput" accept="image/*" multiple style="display:none" onchange="handleWizardFiles(this.files)">
+    </div>
+    <div class="upload-preview">${photosHtml}</div>
+    <div class="form-grid">
+      <div class="form-group"><label>学科 *</label><select onchange="wizardState.subject=this.value;wizardState.topic=Object.keys(curriculum[this.value]||{})[0]||'';renderWizard()">${subjectOptions}</select></div>
+      <div class="form-group"><label>课题 *</label><select id="wizardTopicSelect">${topicOptions}</select></div>
+      <div class="form-group"><label>你的答案（选填）</label><input type="text" id="wizardYourAnswer" placeholder="如：A / 写到第(ii)步" value="${wizardState.yourAnswer}"></div>
+      <div class="form-group"><label>题目来源（选填）</label><input type="text" id="wizardSource" placeholder="如：2023 DSE 卷一 Q15" value="${wizardState.source}"></div>
+      <div class="form-group full"><label>题目文字（选填，有助于AI生成更准确的解析）</label><textarea id="wizardQuestionText" style="min-height:80px;" placeholder="可粘贴或输入题目文字，AI将基于此生成解析。如不填写，可在下一步AI识别后补充。">${wizardState.questionText}</textarea></div>
+    </div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-top:16px;">只需选择学科和课题，AI 会自动识别子课题、题型，并通过询问了解你的思路。填写题目文字可获得更精准的解析。</p>
+  `;
+}
+
+function handleWizardFiles(files){
+  for(const f of files){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      wizardState.photos.push(e.target.result);
+      renderWizard();
+    };
+    reader.readAsDataURL(f);
+  }
+}
+
+function renderStep2(){
+  // 模拟AI识别
+  const topics=curriculum[wizardState.subject]||{};
+  const subtopics=topics[wizardState.topic]||[];
+  // 自动选择第一个子课题（模拟AI识别）
+  if(!wizardState.subtopic && subtopics.length>0) wizardState.subtopic=subtopics[0];
+  // 自动判断题型（模拟）
+  if(!wizardState.questionType) wizardState.questionType='选择题';
+  return `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div class="ai-loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>AI 正在识别题目...</span></div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="ed-meta-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="ed-meta-item"><div class="emi-label">识别学科</div><div class="emi-value">${wizardState.subject}</div></div>
+          <div class="ed-meta-item"><div class="emi-label">识别课题</div><div class="emi-value">${wizardState.topic}</div></div>
+          <div class="ed-meta-item"><div class="emi-label">识别子课题</div><div class="emi-value">${wizardState.subtopic}</div></div>
+          <div class="ed-meta-item"><div class="emi-label">识别题型</div><div class="emi-value"><span class="tag tag-${wizardState.questionType==='选择题'?'mc':'lq'}">${wizardState.questionType}</span></div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">子课题（如识别有误可修改）</label>
+          <select class="form-group" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;" onchange="wizardState.subtopic=this.value">
+            ${subtopics.map(s=>`<option ${s===wizardState.subtopic?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div style="margin-top:12px;">
+          <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">题型（如识别有误可修改）</label>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <span class="inquiry-option ${wizardState.questionType==='选择题'?'selected':''}" onclick="wizardState.questionType='选择题';renderWizard()">选择题</span>
+            <span class="inquiry-option ${wizardState.questionType==='长答题'?'selected':''}" onclick="wizardState.questionType='长答题';renderWizard()">长答题</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStep3(){
+  // 根据学科、课题、题型生成询问问题
+  const questions=generateInquiryQuestions();
+  return `
+    <div class="card">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">AI 需要了解你的思路，以便准确判断错因。请回答以下问题：</p>
+      ${questions.map((q,i)=>`
+        <div class="inquiry-question">
+          <div class="iq-label">问题 ${i+1}</div>
+          <div class="iq-text">${q.text}</div>
+          <div class="inquiry-options">
+            ${q.options.map((opt,j)=>`<span class="inquiry-option ${wizardState.inquiryAnswers[i]===opt?'selected':''}" onclick="selectInquiryAnswer(${i},'${opt.replace(/'/g,"\\'")}')">${opt}</span>`).join('')}
+          </div>
+          <input type="text" style="margin-top:8px;width:100%;padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;" placeholder="或输入你的回答..." value="${wizardState.inquiryAnswers[i]&&!q.options.includes(wizardState.inquiryAnswers[i])?wizardState.inquiryAnswers[i]:''}" onchange="wizardState.inquiryAnswers[${i}]=this.value">
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function generateInquiryQuestions(){
+  const sub=wizardState.subject, top=wizardState.topic, qt=wizardState.questionType;
+  if(qt==='选择题'){
+    return [
+      {text:'你选这个答案时，主要依据是什么？', options:['凭印象选的','排除了其他选项','记得课本说过','计算得出']},
+      {text:'你觉得这道题考的核心概念是什么？', options:['不太确定','知道大概但说不清楚','很清楚概念']},
+      {text:'其他选项中，有没有你觉得也可能对的？', options:['没有，很确定','有1个犹豫','有2个以上都觉得可能']}
+    ];
+  } else {
+    return [
+      {text:'你做到哪一步开始卡住或出错？', options:['完全没思路','第一步就错了','中间步骤算错','思路对但结果错']},
+      {text:'你用了什么方法或公式？', options:['不知道用什么','用了公式但不确定对不对','公式对但代入错','方法太复杂']},
+      {text:'这道题你花了多长时间？', options:['很快就做完了','花了一些时间','花了很长时间','没来得及做']}
+    ];
+  }
+}
+
+function selectInquiryAnswer(idx,val){
+  wizardState.inquiryAnswers[idx]=val;
+  renderWizard();
+}
+
+function renderStep4(){
+  // 只在首次进入或用户未确认时计算错因，用户修改后不再覆盖
+  if(!wizardState.errorTypeConfirmed){
+    const answers=wizardState.inquiryAnswers;
+    let errorType='概念不清', summary='';
+    const a0=answers[0]||'', a1=answers[1]||'', a2=answers[2]||'';
+    if(wizardState.questionType==='选择题'){
+      if(a0.includes('凭印象')||a1.includes('不太确定')){ errorType='概念不清'; summary='对核心概念理解不清晰，凭印象选择答案，未能准确判断选项的对错。'; }
+      else if(a2.includes('犹豫')||a2.includes('都觉得')){ errorType='思路错误'; summary='解题思路不明确，在多个选项间犹豫，缺乏快速排除错误选项的技巧。'; }
+      else { errorType='审题错误'; summary='可能因读题不仔细或忽略关键词而选错。'; }
+    } else {
+      if(a0.includes('没思路')||a0.includes('第一步')){ errorType='思路错误'; summary='未能识别题型并选择正确的解题方法，在第一步就卡住或方向错误。'; }
+      else if(a0.includes('中间')||a0.includes('结果错')||a1.includes('代入错')){ errorType='计算失误'; summary='解题思路正确，但在计算过程中出现数值代入或运算错误。'; }
+      else if(a1.includes('不知道用什么')){ errorType='概念不清'; summary='对相关公式和概念掌握不牢，不知道应该使用什么方法。'; }
+      else if(a2.includes('很长')||a2.includes('没来得及')){ errorType='时间不够'; summary='答题速度较慢，在规定时间内未能完成。'; }
+      else { errorType='粗心大意'; summary='思路和计算都正确，但可能因步骤不规范、单位遗漏或书写问题失分。'; }
+    }
+    wizardState.errorType=errorType;
+    wizardState.errorSummary=summary;
+  }
+  const errorType=wizardState.errorType;
+  const summary=wizardState.errorSummary;
+  return `
+    <div class="card">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">AI 根据你的回答和答题痕迹，建议错因为：</div>
+        <span class="tag tag-${getTagClass(errorType)}" style="font-size:16px;padding:6px 16px;">${errorType}</span>
+      </div>
+      <div class="ed-wrong" style="margin:16px 0;">
+        <div class="ew-label">错因总结</div>
+        <p style="font-size:13px;margin:0;">${summary}</p>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">如判定有误，点击选择正确错因：</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+          ${errorTypes.map(et=>`<span class="inquiry-option ${wizardState.errorType===et?'selected':''}" onclick="selectErrorType('${et}')">${et}</span>`).join('')}
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">错因描述（可修改）</label>
+        <textarea style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-height:60px;" onchange="wizardState.errorSummary=this.value;wizardState.errorTypeConfirmed=true">${summary}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function selectErrorType(et){
+  wizardState.errorType=et;
+  wizardState.errorTypeConfirmed=true;
+  const templates={
+    '概念不清':'对核心概念理解不清晰，未能准确掌握相关定义、公式或原理。',
+    '计算失误':'解题思路正确，但在计算过程中出现数值代入或运算错误。',
+    '思路错误':'未能识别题型并选择正确的解题方法，解题方向有误。',
+    '审题错误':'读题不仔细，忽略了关键词或条件，导致理解偏差。',
+    '时间不够':'答题速度较慢，在规定时间内未能完成或匆忙作答。',
+    '粗心大意':'思路和计算都正确，但因步骤不规范、单位遗漏或书写问题失分。'
+  };
+  wizardState.errorSummary=templates[et]||wizardState.errorSummary;
+  renderWizard();
+}
+
+function renderStep5(){
+  // 生成AI解析（基于题目文字+询问回答+错因）
+  if(!wizardState.analysis){
+    wizardState.analysis=generateAnalysis();
+    wizardState.correctAnswer=wizardState.questionType==='选择题'?'需在讨论区确认':'需在讨论区确认';
+    wizardState.title=wizardState.subtopic+' — '+wizardState.errorType;
+    if(!wizardState.questionText || wizardState.questionText.includes('需AI识别')){
+      wizardState.questionText='（请在下方补充题目文字，或在讨论区说明，AI将基于此生成更准确的解析）';
+    }
+  }
+  const discHtml=wizardState.discussion.map(m=>`<div class="chat-msg ${m.role}"><div class="chat-avatar">${m.role==='ai'?'AI':'你'}</div><div class="chat-bubble">${m.text}</div></div>`).join('');
+  return `
+    <div class="discussion-panel">
+      <div class="discussion-left">
+        <h4 style="font-size:13px;font-weight:600;margin-bottom:12px;">AI 初步解析</h4>
+        <div class="ed-section" style="margin-bottom:16px;">
+          <h4 style="font-size:11px;color:var(--text-tertiary);">题目（可编辑）</h4>
+          <textarea style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;min-height:60px;margin-top:6px;" onchange="wizardState.questionText=this.value;wizardState.analysis=generateAnalysis();renderWizard()">${wizardState.questionText}</textarea>
+        </div>
+        <div class="ed-section" style="margin-bottom:16px;">
+          <h4 style="font-size:11px;color:var(--text-tertiary);">错因</h4>
+          <p style="font-size:12px;"><span class="tag tag-${getTagClass(wizardState.errorType)}">${wizardState.errorType}</span> ${wizardState.errorSummary}</p>
+        </div>
+        <div class="ed-section">
+          <h4 style="font-size:11px;color:var(--text-tertiary);">解析内容</h4>
+          <div style="font-size:12px;line-height:1.8;" id="analysisContent">${wizardState.analysis}</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="wizardState.analysis=generateAnalysis();renderWizard();showToast('解析已重新生成')">重新生成解析</button>
+        </div>
+      </div>
+      <div class="discussion-right">
+        <h4 style="font-size:13px;font-weight:600;margin-bottom:12px;">讨论区</h4>
+        <div class="ed-chat" id="discussionChat" style="flex:1;min-height:200px;">
+          ${discHtml||'<p style="color:var(--text-tertiary);font-size:12px;">如果你觉得解析有误，可以在这里和AI讨论，确认后解析会更新</p>'}
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="discussionInput" placeholder="输入你的问题或质疑..." onkeydown="if(event.key==='Enter')sendDiscussion()">
+          <button class="btn btn-primary btn-sm" onclick="sendDiscussion()">发送</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function generateAnalysis(){
+  const et=wizardState.errorType, qt=wizardState.questionType;
+  const qt_text=wizardState.questionText||'';
+  const answers=wizardState.inquiryAnswers||[];
+  const yourAns=wizardState.yourAnswer||'';
+  // 从题目文字提取关键词
+  const hasCalc=/计算|求|计算|mol|g|dm|cm|m\/s|kg|J|V|A|Ω|°C|K|%/.test(qt_text);
+  const hasConcept=/定义|概念|原理|定律|定理|公式|性质|规律/.test(qt_text);
+  const hasExperiment=/实验|装置|观察|测量|测定/.test(qt_text);
+
+  if(qt==='选择题'){
+    let optionAnalysis='';
+    // 如果用户选了特定选项，重点分析该选项
+    if(yourAns && /^[A-D]$/.test(yourAns)){
+      optionAnalysis=`你选了 <b>${yourAns}</b>。<br>`;
+      ['A','B','C','D'].forEach(opt=>{
+        if(opt===yourAns){
+          optionAnalysis+=`${opt}. <span style="color:#991B1B;">你的选择 — 需重点分析为什么错</span><br>`;
+        } else {
+          optionAnalysis+=`${opt}. （需结合题目具体分析）<br>`;
+        }
+      });
+    } else {
+      optionAnalysis='A. （需结合题目分析）<br>B. （需结合题目分析）<br>C. （需结合题目分析）<br>D. （需结合题目分析）<br>';
+    }
+
+    let quickTip='';
+    if(et==='概念不清') quickTip='先回忆核心概念的准确定义，再逐一比对选项，不要凭印象。';
+    else if(et==='审题错误') quickTip='圈出题目中的否定词、范围词、条件词，确认题目问的是什么。';
+    else if(et==='思路错误') quickTip='使用排除法：先排除明显错误的选项，缩小范围后再比较剩余选项。';
+    else quickTip='仔细计算后再选，注意单位和有效数字。';
+
+    let conceptHint='';
+    if(hasExperiment) conceptHint='本题涉及实验原理，需理解实验装置的作用和观察现象的本质。';
+    else if(hasConcept) conceptHint='本题考查概念理解，需准确掌握定义和适用条件。';
+    else conceptHint='本题考查'+wizardState.subtopic+'的核心知识点。';
+
+    return `<b>考点定位：</b>${wizardState.subject} · ${wizardState.topic} · ${wizardState.subtopic}<br><br>
+<b>你的回答：</b>${yourAns||'未填写'}<br><br>
+<b>逐项分析：</b><br>${optionAnalysis}<br>
+<b>快速解题技巧：</b>${quickTip}<br><br>
+<b>核心概念：</b>${conceptHint}<br><br>
+<b>错因对应：</b>${wizardState.errorSummary}<br><br>
+<b>易错提醒：</b>这类题常见陷阱包括概念混淆、审题遗漏关键词、计算粗心。建议在讨论区确认具体选项的对错原因。`;
+  } else {
+    let lostPoint='';
+    if(et==='计算失误') lostPoint='代入数值时注意单位换算，计算后回查关键步骤，避免抄错数字。';
+    else if(et==='思路错误') lostPoint='先判断题型，选择最简洁的解题方法，不要在复杂方法上浪费时间。';
+    else if(et==='概念不清') lostPoint='确认使用的公式和原理正确，理解适用条件后再代入计算。';
+    else if(et==='审题错误') lostPoint='仔细读题，圈出已知条件和所求量，避免漏看限制条件。';
+    else lostPoint='注意答题规范，写出关键步骤，标注单位和有效数字。';
+
+    let stepHint='';
+    if(hasCalc) stepHint='本题涉及计算，需注意单位换算和有效数字。';
+    else if(hasExperiment) stepHint='本题涉及实验，需描述实验步骤、观察现象和数据处理。';
+    else stepHint='本题需写出完整推导过程，关键步骤不能省略。';
+
+    return `<b>考点定位：</b>${wizardState.subject} · ${wizardState.topic} · ${wizardState.subtopic}<br><br>
+<b>你的回答：</b>${yourAns||'未填写'}<br><br>
+<b>标准答题框架（Marking Scheme）：</b><br>
+步骤1：写出公式/原理（1分）— 明确使用的定律或公式<br>
+步骤2：代入数值（1分）— 注意单位换算<br>
+步骤3：计算过程（1分）— 展示关键运算步骤<br>
+步骤4：最终答案+单位+有效数字（1分）<br><br>
+<b>失分点分析：</b>${lostPoint}<br><br>
+<b>答题提示：</b>${stepHint}<br><br>
+<b>错因对应：</b>${wizardState.errorSummary}<br><br>
+<b>更简捷思路：</b>在讨论区可与AI讨论是否有更简便的解题方法。<br><br>
+<b>常见扣分点：</b>缺单位、有效数字不对、关键步骤省略、公式写错或不写。`;
+  }
+}
+
+function sendDiscussion(){
+  const input=document.getElementById('discussionInput');
+  const text=input.value.trim();
+  if(!text) return;
+  wizardState.discussion.push({role:'user',text});
+  input.value='';
+  // 模拟AI回复
+  setTimeout(()=>{
+    wizardState.discussion.push({role:'ai',text:'收到你的问题。根据DSE官方marking scheme，'+text+'这一点确实需要注意。让我重新核对一下解析... 你说得对，我已更新解析内容。请确认是否正确？'});
+    renderWizard();
+  },600);
+  renderWizard();
+}
+
+function renderStep6(){
+  return `
+    <div class="card">
+      <h4 style="font-size:14px;font-weight:600;margin-bottom:16px;">确认错题信息</h4>
+      <div class="ed-meta-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="ed-meta-item"><div class="emi-label">学科</div><div class="emi-value">${wizardState.subject}</div></div>
+        <div class="ed-meta-item"><div class="emi-label">课题</div><div class="emi-value">${wizardState.topic}</div></div>
+        <div class="ed-meta-item"><div class="emi-label">子课题</div><div class="emi-value">${wizardState.subtopic}</div></div>
+        <div class="ed-meta-item"><div class="emi-label">题型</div><div class="emi-value"><span class="tag tag-${wizardState.questionType==='选择题'?'mc':'lq'}">${wizardState.questionType}</span></div></div>
+        <div class="ed-meta-item"><div class="emi-label">错因</div><div class="emi-value"><span class="tag tag-${getTagClass(wizardState.errorType)}">${wizardState.errorType}</span></div></div>
+        <div class="ed-meta-item"><div class="emi-label">难度</div><div class="emi-value">
+          <select style="padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;" onchange="wizardState.difficulty=this.value">
+            <option ${wizardState.difficulty==='简单'?'selected':''}>简单</option>
+            <option ${wizardState.difficulty==='中等'?'selected':''}>中等</option>
+            <option ${wizardState.difficulty==='困难'?'selected':''}>困难</option>
+          </select>
+        </div></div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">题目标题</label>
+        <input type="text" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;" value="${wizardState.title}" onchange="wizardState.title=this.value">
+      </div>
+      <div style="margin-top:12px;">
+        <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">题目内容（可编辑）</label>
+        <textarea style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-height:80px;" onchange="wizardState.questionText=this.value">${wizardState.questionText}</textarea>
+      </div>
+      <div style="margin-top:12px;">
+        <label style="font-size:12px;font-weight:500;color:var(--text-secondary);">你的答案</label>
+        <input type="text" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;" value="${wizardState.yourAnswer}" onchange="wizardState.yourAnswer=this.value">
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--primary-bg);border-radius:8px;">
+        <p style="font-size:12px;color:var(--primary);">确认后，这道题将被录入错题本，下次复习日期为明天（${addDaysStr(todayStr(),1)}）。</p>
+      </div>
+    </div>
+  `;
+}
+
+function wizardNext(){
+  // 收集当前步骤的输入
+  if(wizardState.step===1){
+    const topicSel=document.getElementById('wizardTopicSelect');
+    if(topicSel) wizardState.topic=topicSel.value;
+    const ya=document.getElementById('wizardYourAnswer');
+    if(ya) wizardState.yourAnswer=ya.value;
+    const src=document.getElementById('wizardSource');
+    if(src) wizardState.source=src.value;
+    const qt=document.getElementById('wizardQuestionText');
+    if(qt) wizardState.questionText=qt.value;
+    if(wizardState.photos.length===0){ showToast('请先上传错题照片'); return; }
+    if(!wizardState.subject||!wizardState.topic){ showToast('请选择学科和课题'); return; }
+  }
+  if(wizardState.step===3){
+    const unanswered=wizardState.inquiryAnswers.filter(a=>!a||!a.trim()).length;
+    if(unanswered>0){ showToast('请回答所有问题'); return; }
+  }
+  if(wizardState.step<6){ wizardState.step++; renderWizard(); }
+}
+
+function wizardPrev(){
+  if(wizardState.step>1){ wizardState.step--; renderWizard(); }
+}
+
+function confirmAddError(){
+  // 生成新ID
+  const ids=Object.keys(errors).map(Number).filter(n=>!isNaN(n));
+  const newId=String(Math.max(0,...ids)+1).padStart(4,'0');
+  const today=todayStr();
+  const newError={
+    id:newId,
+    subject:wizardState.subject,
+    topic:wizardState.topic,
+    subtopic:wizardState.subtopic,
+    questionType:wizardState.questionType,
+    title:wizardState.title||(wizardState.subtopic+' — '+wizardState.errorType),
+    errorType:wizardState.errorType,
+    difficulty:wizardState.difficulty,
+    date:today,
+    source:wizardState.source||'—',
+    status:'未掌握',
+    reviewCount:0,
+    nextReview:addDaysStr(today,1),
+    yourAnswer:wizardState.yourAnswer||'—',
+    correctAnswer:wizardState.correctAnswer||'—',
+    question:wizardState.questionText,
+    wrongDesc:wizardState.errorSummary,
+    correctDesc:'（解析已在讨论区确认）',
+    analysis:wizardState.analysis,
+    knowledge:'（相关知识点，可在详情页补充）',
+    hint:'1. 回忆'+wizardState.topic+'的核心概念\n2. 思考这道题的突破口\n3. 参考解析中的解题思路',
+    inquiry:wizardState.inquiryAnswers.map((a,i)=>({ai:generateInquiryQuestions()[i]?.text||'', user:a})),
+    discussion:wizardState.discussion,
+    photo:wizardState.photos[0]||null
+  };
+  errors[newId]=newError;
+  saveData();
+  showToast('错题 #'+newId+' 已录入错题本！');
+  initWizard();
+  renderAll();
+  setTimeout(()=>navigate('home'),800);
+}
+
+// ===== 上传区域拖拽 =====
+document.addEventListener('DOMContentLoaded',function(){
+  const ua=document.getElementById('wizardUploadArea');
+  if(ua){
+    ua.addEventListener('dragover',function(e){e.preventDefault();this.classList.add('dragover');});
+    ua.addEventListener('dragleave',function(){this.classList.remove('dragover');});
+    ua.addEventListener('drop',function(e){e.preventDefault();this.classList.remove('dragover');handleWizardFiles(e.dataTransfer.files);});
+  }
+});
+
+// ===== 初始化 =====
+loadData();
+// 自动检查版本和数据完整性
+(function autoCheckUpdate(){
+  const savedVersion = localStorage.getItem('dse_app_version');
+  const defaultCount = Object.keys(defaultErrors).length;
+  const currentCount = Object.keys(errors).length;
+  if(savedVersion !== APP_VERSION || currentCount < defaultCount){
+    // 版本不匹配或题目数量不足，强制同步
+    const oldErrors = JSON.parse(JSON.stringify(errors));
+    const deletedIds = JSON.parse(localStorage.getItem('dse_deleted_ids')||'[]');
+    errors = JSON.parse(JSON.stringify(defaultErrors));
+    deletedIds.forEach(id=>{ delete errors[id]; });
+    for(const id in defaultErrors){
+      if(oldErrors[id] && !deletedIds.includes(id)){
+        errors[id].status = oldErrors[id].status || errors[id].status;
+        errors[id].reviewCount = oldErrors[id].reviewCount || 0;
+        errors[id].nextReview = oldErrors[id].nextReview || errors[id].nextReview;
+        if(oldErrors[id].inquiry && oldErrors[id].inquiry.length > 0){
+          errors[id].inquiry = oldErrors[id].inquiry;
+        }
+      }
+    }
+    // 保留用户通过AI助手录入的新错题
+    for(const id in oldErrors){
+      if(!defaultErrors[id] && !deletedIds.includes(id) && oldErrors[id] && oldErrors[id].subject){
+        errors[id] = oldErrors[id];
+      }
+    }
+    saveData();
+    localStorage.setItem('dse_app_version', APP_VERSION);
+  }
+})();
+renderAll();
+const now=new Date(); const days=['周日','周一','周二','周三','周四','周五','周六'];
+document.getElementById('topbarDate').textContent=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 '+days[now.getDay()];
+</script>
+</body>
+</html>

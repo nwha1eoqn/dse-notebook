@@ -1,0 +1,7 @@
+{
+  "name": "dse-error-notebook",
+  "version": "1.0.0",
+  "description": "DSE错题本 - 拍照上传AI解析",
+  "private": true,
+  "dependencies": {}
+}
